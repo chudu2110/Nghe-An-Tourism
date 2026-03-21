@@ -1,0 +1,5 @@
+{
+  "name": "Nghệ An Travel - Explore the Heart of Vietnam",
+  "description": "Discover the beauty, culture, and flavors of Nghệ An. A comprehensive travel guide for destinations, experiences, and local traditions.",
+  "requestFramePermissions": ["microphone"]
+}
