@@ -36,7 +36,7 @@ nghệ-an-travel/
 
 ---
 
-## � Hướng dẫn cài đặt từ đầu
+## 🛠️ Hướng dẫn cài đặt từ đầu
 
 Để chạy dự án này trên môi trường local, hãy làm theo các bước sau:
 
@@ -53,16 +53,7 @@ Mở terminal (PowerShell hoặc CMD) tại thư mục gốc của dự án và 
 npm install
 ```
 
-### 4. Cấu hình biến môi trường
-Tạo một file `.env` từ file `.env.example` và điền các API Key cần thiết:
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-GOOGLE_MAPS_PLATFORM_KEY=your_google_maps_key_here
-APP_URL=http://localhost:3000
-```
-*Lưu ý: Bạn có thể lấy Gemini API Key tại [Google AI Studio](https://aistudio.google.com/).*
-
-### 5. Chạy ứng dụng
+### 4. Chạy ứng dụng
 Khởi động server phát triển bằng lệnh:
 ```bash
 npm run dev
@@ -97,7 +88,7 @@ Sau khi lệnh hoàn tất, một thư mục mới có tên `dist/` sẽ xuất 
 
 ---
 
-## � Công nghệ sử dụng
+## 🚀 Công nghệ sử dụng
 - **Framework**: React 19, Vite 6
 - **Styling**: Tailwind CSS 4
 - **Animation**: Framer Motion
