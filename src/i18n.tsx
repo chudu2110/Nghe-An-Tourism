@@ -19,26 +19,26 @@ const en: Translations = {
   'Đóng': 'Close',
   Menu: 'Menu',
   English: 'English',
-  'Chào mừng đến với Nghệ An': 'Welcome to Nghệ An',
-  'Khám phá trái tim miền Trung.': 'Explore the heart of Central Vietnam.',
+  'Chào mừng đến với Nghệ An': 'Welcome to Nghe An',
+  'Khám phá trái tim miền Trung': 'Explore the heart of Central Vietnam',
   'Bạn muốn đi đâu?': 'Where do you want to go?',
   'Tìm kiếm': 'Search',
   'Cuộn để xem': 'Scroll to explore',
-  'Về Nghệ An': 'About Nghệ An',
+  'Về Nghệ An': 'About Nghe An',
   'Khám phá vùng đất địa linh nhân kiệt': 'Discover a land of heritage and distinction',
   'Nghệ An không chỉ là một điểm đến, đó là một hành trình trở về nguồn cội.':
-    'Nghệ An is not just a destination—it is a journey back to your roots.',
+    'Nghe An is not just a destination—it is a journey back to your roots.',
   'Với diện tích lớn nhất Việt Nam, Nghệ An sở hữu địa hình đa dạng từ những bãi biển xanh ngắt ở Cửa Lò đến những dãy núi hùng vĩ ở Kỳ Sơn, Quế Phong. Đây là quê hương của Chủ tịch Hồ Chí Minh vĩ đại và là cái nôi của Dân ca Ví, Giặm - Di sản văn hóa phi vật thể đại diện của nhân loại.':
-    "As Vietnam's largest province by area, Nghệ An features diverse landscapes—from the turquoise beaches of Cửa Lò to the majestic mountains of Kỳ Sơn and Quế Phong. It is the homeland of President Hồ Chí Minh and the cradle of Ví and Giặm folk songs—an intangible cultural heritage recognized worldwide.",
+    "As Vietnam's largest province by area, Nghe An features diverse landscapes—from the turquoise beaches of Cua Lo to the majestic mountains of Ky Son and Que Phong. It is the homeland of President Ho Chi Minh and the cradle of Vi and Giam folk songs—an intangible cultural heritage recognized worldwide.",
   'Diện tích (km²)': 'Area (km²)',
   'Lễ hội hàng năm': 'Annual festivals',
   'Tìm hiểu thêm về lịch sử': 'Learn more about history',
   'Giọng nói đặc trưng, ấm áp và chân tình của người dân xứ Nghệ.':
-    'The distinctive, warm, and sincere voice of the people of Nghệ.',
+    'The distinctive, warm, and sincere voice of the people of Nghe An.',
   'Điểm đến nổi bật': 'Featured destinations',
   'Những nơi bạn không thể bỏ qua': "Places you shouldn't miss",
   'Khám phá': 'Explore',
-  'Nghệ An': 'Nghệ An',
+  'Nghệ An': 'Nghe An',
   'Tìm hiểu thêm': 'Learn more',
   'Khám phá chi tiết': 'Explore details',
   'Khám phá ngay': 'Explore now',
@@ -48,12 +48,20 @@ const en: Translations = {
   'Bản tin du lịch': 'Travel newsletter',
   'Nhận ưu đãi đặc biệt.': 'Get special offers.',
   'Bản tin hàng tháng cung cấp những mẹo hay nhất và thông tin quan trọng về du lịch Nghệ An cho chuyến đi hoàn hảo của bạn.':
-    'Monthly updates with the best tips and essential information for the perfect trip to Nghệ An.',
+    'Monthly updates with the best tips and essential information for the perfect trip to Nghe An.',
   'Đăng ký ngay!': 'Subscribe now!',
   'Vietnam Airlines đến Vinh': 'Vietnam Airlines to Vinh',
   'Bay cùng hãng hàng không quốc gia': 'Fly with the national carrier',
   'Kết nối Nghệ An với mọi miền tổ quốc và thế giới cùng Vietnam Airlines.':
-    'Connect Nghệ An with Vietnam and the world with Vietnam Airlines.',
+    'Connect Nghe An with Vietnam and the world with Vietnam Airlines.',
+  'Vietjet Air đến Vinh': 'Vietjet Air to Vinh',
+  'Bay cùng Vietjet': 'Fly with Vietjet',
+  'Bay tiết kiệm, linh hoạt lịch trình và săn ưu đãi để đến Nghệ An thật dễ dàng.':
+    'Fly on a budget, stay flexible, and catch great deals to reach Nghe An with ease.',
+  Puxailaileng: 'Puxailaileng',
+  'Đỉnh cao nhất Bắc Trường Sơn': 'Highest peak of the Northern Truong Son',
+  'Đỉnh Puxailaileng (Kỳ Sơn, Nghệ An) cao khoảng 2.720m — cung trekking gần 20km qua rừng sa mu, pơ mu và cột mốc 422 trước khi chạm “đất cao, trời thấp”.':
+    'Puxailaileng Peak (Ky Son, Nghe An) is about 2,720m high—an almost 20km trek through ancient sa mu and po mu forests, passing border marker 422 before reaching the “high land, low sky”.',
   'Đặt vé ngay': 'Book now',
   'Chuyến bay': 'Flights',
   'Căn hộ & Homestay': 'Apartments & Homestays',
@@ -73,47 +81,97 @@ const en: Translations = {
   'Kế hoạch': 'Planning',
   'Lên kế hoạch': 'Planning',
   'Tình nguyện viên': 'Volunteers',
+  'Podcast': 'Podcast',
   'Blog': 'Blog',
   'Đặt chỗ': 'Accommodations',
   'Bản đồ': 'Map',
   'Từ điển': 'Dictionary',
   'Giới thiệu': 'About',
+  'Điểm Đến': 'Destinations',
+  'Trải Nghiệm': 'Experiences',
+  'Ẩm Thực': 'Cuisine',
+  'Kế Hoạch': 'Planning',
+  'Bản Đồ': 'Map',
+  'Từ Điển': 'Dictionary',
+  'Đặt Chỗ': 'Accomodations',
+  'Tình Nguyện': 'Volunteering',
+  'Cẩm nang cổng thông tin': 'The Portal Guide',
+  'Hệ sinh thái': 'Ecosystem',
+  'Du lịch số': 'Digital tourism',
+  'Cổng thông tin toàn diện giúp bạn giải mã vẻ đẹp tiềm ẩn của Nghệ An thông qua những trải nghiệm thực tế và dữ liệu chính xác.':
+    "A comprehensive portal that helps you uncover Nghệ An’s hidden beauty through real experiences and reliable data.",
+  'Mục lục': 'Directory',
+  'Từ cảnh sắc đến con người Xứ Nghệ, tất cả đều sẵn sàng để bạn trải nghiệm một cách trọn vẹn nhất.':
+    'From landscapes to local people, everything is ready for you to experience to the fullest.',
+  'Truy cập': 'Open',
+  'Giá trị cốt lõi': 'Our Values',
+  'Sứ mệnh của': 'Our',
+  'Chúng tôi': 'Mission',
+  'Dữ liệu chính xác': 'Accurate data',
+  'Mọi thông tin đều được đội ngũ chuyên gia bản địa kiểm chứng và cập nhật thường xuyên.':
+    'All information is verified by local experts and updated regularly.',
+  'Trải nghiệm cá nhân': 'Personal experience',
+  'Chúng tôi tin rằng mỗi hành trình đều là duy nhất, và nền tảng này giúp bạn cá nhân hóa điều đó.':
+    'We believe every journey is unique, and this platform helps you personalize it.',
+  'Kết nối cộng đồng': 'Community connection',
+  'Xóa nhòa khoảng cách giữa du khách và người dân địa phương thông qua các dự án tình nguyện.':
+    'Bridging the gap between travelers and locals through volunteer initiatives.',
+  'Bắt đầu': 'Begin',
+  'Chọn một chuyên mục từ mục lục phía trên hoặc quay lại trang chủ để bắt đầu khám phá Nghệ An theo cách của bạn.':
+    'Choose a category from the directory above, or go back to the homepage to start exploring Nghệ An your way.',
+  'Quay lại trang chủ': 'Back to home',
+  'Hành trình từ đỉnh Puxailaileng hùng vĩ đến dải cát trắng mịn Cửa Lò.':
+    'A journey from the majestic Puxailaileng peak to the silky white sands of Cửa Lò.',
+  'Săn mây đại ngàn, chèo thuyền trên sông Lam và văn hóa bản địa.':
+    'Chase clouds in the highlands, paddle on the Lam River, and dive into local culture.',
+  'Đượm vị quê hương trong từng món ngon đặc sản.': 'Hometown flavors in every signature dish.',
+  'Hương vị đặc sản và chiều sâu văn hóa trong từng câu chuyện Xứ Nghệ.':
+    'Signature flavors and cultural depth in every Nghệ An story.',
+  'Công cụ thiết kế hành trình hoàn hảo theo từng mùa và sở thích.':
+    'Tools to craft the perfect itinerary by season and preference.',
+  'Dẫn lối bạn đến những góc nhỏ chưa tên.': 'Guiding you to hidden, unnamed corners.',
+  'Giải mã những từ ngữ địa phương đặc trưng của người Xứ Nghệ.':
+    'Decode the distinctive local phrases of Nghệ people.',
+  'Dịch vụ đặt phòng, tour và vé tham quan nhanh chóng, an toàn.':
+    'Fast and secure booking for stays, tours, and tickets.',
+  'Tham gia bảo tồn thiên nhiên và hỗ trợ phát triển cộng đồng.':
+    'Join nature conservation and support community development.',
   'Trợ lý du lịch': 'Travel assistant',
   'TP Vinh': 'Vinh City',
-  'Trung tâm kinh tế, văn hóa của Nghệ An.': 'The economic and cultural hub of Nghệ An.',
-  'Lễ hội Đền Hồng Sơn': 'Hồng Sơn Temple Festival',
-  'Cửa Lò': 'Cửa Lò',
+  'Trung tâm kinh tế, văn hóa của Nghệ An.': 'The economic and cultural hub of Nghe An.',
+  'Lễ hội Đền Hồng Sơn': 'Hong Son Temple Festival',
+  'Cửa Lò': 'Cua Lo',
   'Bãi biển nổi tiếng với cát trắng, nắng vàng.': 'A famous beach with white sand and golden sunshine.',
-  'Lễ hội Sông nước Cửa Lò': 'Cửa Lò Water Festival',
-  'Nam Đàn': 'Nam Đàn District',
-  'Quê hương Chủ tịch Hồ Chí Minh.': 'The homeland of President Hồ Chí Minh.',
+  'Lễ hội Sông nước Cửa Lò': 'Cua Lo Water Festival',
+  'Nam Đàn': 'Nam Dan District',
+  'Quê hương Chủ tịch Hồ Chí Minh.': 'The homeland of President Ho Chi Minh.',
   'Lễ hội Làng Sen': 'Lotus Village Festival',
-  'Con Cuông': 'Con Cuông District',
+  'Con Cuông': 'Con Cuong District',
   'Vẻ đẹp hoang sơ của núi rừng miền Tây.': 'Untouched beauty of the western mountains and forests.',
-  'Lễ hội Môn Sơn - Lục Dạ': 'Môn Sơn – Lục Dạ Festival',
-  'Hưng Nguyên': 'Hưng Nguyên District',
+  'Lễ hội Môn Sơn - Lục Dạ': 'Mon Son – Luc Da Festival',
+  'Hưng Nguyên': 'Hung Nguyen District',
   'Vùng đất địa linh nhân kiệt.': 'A land of heritage and distinguished people.',
-  'Lễ hội Đền Ông Hoàng Mười': 'Ông Hoàng Mười Temple Festival',
-  'Thanh Chương': 'Thanh Chương District',
+  'Lễ hội Đền Ông Hoàng Mười': 'Ong Hoang Muoi Temple Festival',
+  'Thanh Chương': 'Thanh Chuong District',
   'Nổi tiếng với Đảo Chè xanh mướt.': 'Famous for its lush Tea Island.',
-  'Lễ hội Đền Bạch Mã': 'Bạch Mã Temple Festival',
-  'Đô Lương': 'Đô Lương District',
+  'Lễ hội Đền Bạch Mã': 'Bach Ma Temple Festival',
+  'Đô Lương': 'Do Luong District',
   'Vùng đất của những truyền thống văn hóa.': 'A land of rich cultural traditions.',
-  'Lễ hội Đền Quả Sơn': 'Quả Sơn Temple Festival',
-  'Yên Thành': 'Yên Thành District',
+  'Lễ hội Đền Quả Sơn': 'Qua Son Temple Festival',
+  'Yên Thành': 'Yen Thanh District',
   'Quê hương của những cánh đồng lúa bạt ngàn.': 'Home to vast rice fields.',
-  'Lễ hội Đền Cuông': 'Cuông Temple Festival',
-  'Diễn Châu': 'Diễn Châu District',
-  'Nơi có bãi biển Diễn Thành thơ mộng.': 'Home to the poetic Diễn Thành Beach.',
-  'Quỳnh Lưu': 'Quỳnh Lưu District',
+  'Lễ hội Đền Cuông': 'Cuong Temple Festival',
+  'Diễn Châu': 'Dien Chau District',
+  'Nơi có bãi biển Diễn Thành thơ mộng.': 'Home to the poetic Dien Thanh Beach.',
+  'Quỳnh Lưu': 'Quynh Luu District',
   'Vùng đất của muối và hải sản.': 'A land of salt and seafood.',
   'Lễ hội Cầu Ngư': 'Whale Worship Festival',
-  'Kỳ Sơn': 'Kỳ Sơn District',
-  'Chinh phục đỉnh Mường Lống mây mù.': 'Conquer the misty Mường Lống peak.',
-  'Lễ hội Chợ tình Mường Lống': 'Mường Lống Love Market Festival',
-  'Quế Phong': 'Quế Phong District',
+  'Kỳ Sơn': 'Ky Son District',
+  'Chinh phục đỉnh Mường Lống mây mù.': 'Conquer the misty Muong Long peak.',
+  'Lễ hội Chợ tình Mường Lống': 'Muong Long Love Market Festival',
+  'Quế Phong': 'Que Phong District',
   'Thác Bảy Tầng hùng vĩ.': 'The majestic Seven-tier Waterfall.',
-  'Lễ hội Chín Gian': 'Chín Gian Festival',
+  'Lễ hội Chín Gian': 'Chin Gian Festival',
   'Núi & Trekking': 'Mountains & Trekking',
   'Khám phá những đỉnh núi hùng vĩ.': 'Discover majestic mountain peaks.',
   'Thác nước': 'Waterfalls',
@@ -126,8 +184,8 @@ const en: Translations = {
   'Tìm hiểu đời sống của các dân tộc thiểu số.': 'Learn about the lives of ethnic minority communities.',
   'Check-in đẹp': 'Photo spots',
   'Lưu giữ những khoảnh khắc ấn tượng.': 'Capture unforgettable moments.',
-  'Đặc sản Nghệ An': 'Nghệ An specialties',
-  'Súp lươn, cháo lươn, nhút Thanh Chương...': 'Eel soup, eel porridge, Thanh Chương fermented bamboo shoots...',
+  'Đặc sản Nghệ An': 'Nghe An specialties',
+  'Súp lươn, cháo lươn, nhút Thanh Chương...': 'Eel soup, eel porridge, Thanh Chuong fermented bamboo shoots...',
   'Quán ăn ngon': 'Great eateries',
   'Địa chỉ những quán ăn không thể bỏ qua.': "Must-visit local eateries and addresses.",
   'Lễ hội truyền thống': 'Traditional festivals',
@@ -216,8 +274,8 @@ const en: Translations = {
   'Không tìm thấy từ nào khớp với tìm kiếm của bạn.': 'No words match your search.',
   'Xóa bộ lọc tìm kiếm': 'Clear search filter',
   'Tâm hồn xứ Nghệ': 'The soul of Nghệ',
-  '"Dù đi đâu xa, chỉ cần nghe một tiếng \'mô\', \'tê\' là lòng lại thấy ấm áp lạ kỳ, như được trở về với mái nhà thân thương."':
-    '"No matter how far you go, hearing a single \'mô\' or \'tê\' can make your heart feel warm—like coming home."',
+  '"Dù đi đâu xa, chỉ cần nghe một tiếng \'mô\', \'tê\' là lòng lại thấy ấm áp lạ kỳ, như được trở về với mái nhà thân thương"':
+    '"No matter how far you go, hearing a single \'mô\' or \'tê\' can make your heart feel warm—like coming home"',
   'Đâu': 'Where',
   'Kia': 'There',
   'Sao': 'Why/How',
@@ -315,6 +373,7 @@ const en: Translations = {
   'Góc nhìn & Cảm hứng': 'Perspectives & Inspiration',
   'Nhật': 'Travel',
   'ký.': 'Journal.',
+  'ký': 'Journal',
   'Những câu chuyện, kinh nghiệm và cảm hứng cho hành trình của bạn tại mảnh đất Nghệ An.':
     'Stories, tips, and inspiration for your journey through Nghệ An.',
   'Tiêu điểm': 'Featured',
@@ -323,6 +382,7 @@ const en: Translations = {
   'Đăng ký bản tin': 'Newsletter',
   'Nhận cảm hứng': 'Get inspiration',
   'mỗi tuần.': 'every week.',
+  'mỗi tuần': 'every week',
   'Đăng ký để nhận những câu chuyện du lịch mới nhất, kinh nghiệm độc quyền và ưu đãi hành trình từ Nghệ An Discovery.':
     'Subscribe to get the latest travel stories, exclusive tips, and journey offers from Nghệ An Discovery.',
   'Địa chỉ email của bạn': 'Your email address',
@@ -331,6 +391,8 @@ const en: Translations = {
     '* We respect your privacy. Unsubscribe anytime.',
   'Khoảnh khắc': 'Moments',
   'Theo dõi chúng tôi để thấy nhiều hơn': 'Follow us to see more',
+  'Quay lại Blog': 'Back to Blog',
+  'Nghệ An Discovery': 'Nghệ An Discovery',
   'Kinh nghiệm': 'Tips',
   'Cảm hứng': 'Inspiration',
   'Bình minh trên Đảo Chè: Bản giao hưởng của sương và nắng':
@@ -351,7 +413,44 @@ const en: Translations = {
     'Nghĩa Đàn sunflower season: A radiant golden field',
   'Khi hàng triệu đóa hướng dương cùng khoe sắc dưới ánh nắng miền Trung, đó là lúc Nghĩa Đàn trở thành thiên đường cho những tâm hồn yêu cái đẹp.':
     'When millions of sunflowers bloom under Central Vietnam’s sun, Nghĩa Đàn becomes paradise for beauty lovers.',
+  'Biển Cửa Lò – hơi thở của ký ức': 'Cửa Lò beach — the breath of memories',
+  'Biển Cửa Lò không chỉ là cảnh vật, mà là cảm xúc và ký ức — nơi nhịp sóng và gió biển ôm trọn những điều giản đơn nhưng da diết.':
+    'Cửa Lò is more than scenery—it is emotion and memory, where waves and sea wind hold the simplest things that still ache.',
+  'Biển Cửa Lò không chỉ là biển, mà là một nhịp tim, một hơi thở ký ức mà mỗi người con xứ Nghệ đều mang theo. Ngày bé, tôi lẩn tránh những con sóng lớn, trắng xóa, như sợ rằng mình sẽ bị cuốn trôi theo cơn giận dữ của biển. Nhưng lớn lên, tôi nhận ra rằng biển không hề đáng sợ – biển chỉ mời gọi, thôi thúc tôi quay về. Tôi gạt bỏ nỗi sợ hãi, để một lần nữa lắng nghe âm thanh của sóng: nhịp điệu rền rĩ, vừa dồn dập vừa da diết, vang vọng như một bản tình ca bất tận của đại dương.':
+    'Cửa Lò is not only a sea, but a heartbeat—a breath of memory that every child of Nghệ carries. As a child, I avoided the big, foaming waves, afraid they would sweep me away in the sea’s anger. But growing up, I realized the sea is not frightening—it is only calling, urging me to return. I set aside that fear to listen again to the sound of waves: a lingering rhythm, at once urgent and tender, echoing like the ocean’s endless love song.',
+  'Bình minh trên Cửa Lò như vẽ nên một bức tranh thủy mặc: sương mỏng ôm lấy mặt nước, nắng vàng nhảy múa trên từng bọt sóng. Tôi lặng lẽ bước trên bãi cát, để lại dấu chân bên những vỏ sò, ốc nối đuôi nhau, nơi những câu chuyện xưa cũ còn vương vấn trong cát. Chiều xuống, biển khoác áo vàng cam dịu dàng, sóng vỗ nhẹ nhàng như những lời ru, và trong không gian ấy, mọi ồn ào của thế giới dường như tan biến.':
+    'Dawn in Cửa Lò paints an ink-wash scene: thin mist cradles the water, golden light dances on each crest of foam. I walk quietly along the sand, leaving footprints beside shells lined up like a trail, where old stories still linger in the grains. At sunset, the sea wears a gentle amber cloak; waves lap softly like lullabies, and in that space the world’s noise seems to dissolve.',
+  'Máy ảnh của tôi chứa hàng trăm khoảnh khắc về biển: bác ngư dân lặng lẽ thả lưới, ánh nắng xuyên qua từng cánh lưới như những sợi chỉ vàng, những con sóng xô bọt trắng vào bờ cát, tất cả dường như đang kể về một câu chuyện chưa từng được kể. Biển Cửa Lò không chỉ là cảnh vật, mà là cảm xúc, là ký ức, là nơi tôi tìm thấy chính mình trong nhịp sóng và gió biển.':
+    'My camera holds hundreds of moments of the sea: a fisherman quietly casting his net, sunlight threading through each mesh like golden strands, waves pushing white foam onto the shore—everything seems to be telling an untold story. Cửa Lò is not just a view; it is emotion, memory, and the place where I find myself in the rhythm of waves and sea wind.',
+  'Đối với tôi, mỗi lần trở về biển là mỗi lần được sống lại ký ức, được nhắc nhở rằng có những điều giản đơn nhưng da diết, như biển, mãi in dấu trong tâm hồn. Biển Cửa Lò là nỗi nhớ – vừa gần gũi, vừa xa xăm, nhưng luôn dịu dàng ôm trọn trái tim những người yêu biển.':
+    'For me, each return to the sea is a return to memory—an old reminder that some simple things can still ache, and like the sea, stay stamped on the soul. Cửa Lò is longing: both intimate and distant, yet always gently holding the hearts of those who love the sea.',
+  'Những quán “cà-hê” hidden': 'Hidden “cà-hê” cafés',
+  'Những khoảng lặng có hình hài trong các con ngõ nhỏ — nơi mỗi tách “cà-hê” mang theo ký ức, cảm xúc và sự bình yên giữa lòng thành phố.':
+    'Quiet pockets tucked in small alleys—where each cup of “cà-hê” carries memory, feeling, and calm in the middle of the city.',
+  'Ngồi trong những quán “cà-hê” ấy, thời gian dường như trôi chậm lại. Không còn những âm thanh ồn ào của phố xá, không còn những vội vã thường ngày, chỉ còn tiếng thìa chạm nhẹ vào thành cốc, tiếng máy pha cà phê khe khẽ, và đôi khi là vài bản nhạc cũ vang lên đủ để lấp đầy khoảng lặng.':
+    'Sitting in those “cà-hê” spots, time seems to slow down. The city noise fades, the daily rush disappears—there is only the soft clink of a spoon against a cup, the quiet hum of the espresso machine, and sometimes a few old songs playing—just enough to fill the silence.',
+  'Có những buổi chiều, tôi chỉ ngồi đó, không làm gì cả. Không điện thoại, không công việc. Chỉ nhìn ra khoảng sân nhỏ, nơi ánh nắng len qua từng tán cây, rơi lặng lẽ xuống những chiếc bàn gỗ đã sờn màu. Những vị khách quen đến rồi đi, chào nhau bằng ánh mắt hoặc một cái gật đầu rất nhẹ — đủ để biết rằng họ cũng đang tìm kiếm một điều gì đó giống tôi: một khoảng bình yên giữa lòng thành phố.':
+    'Some afternoons, I just sit there doing nothing. No phone, no work. I watch a small courtyard where sunlight slips through the leaves and quietly lands on weathered wooden tables. Familiar guests come and go, greeting each other with a glance or a gentle nod—enough to know they are looking for the same thing I am: a pocket of peace in the middle of the city.',
+  'Mỗi quán “cà-hê” hidden như vậy đều mang một câu chuyện riêng. Có quán là căn nhà cũ được giữ nguyên gần như mọi thứ, từ bộ bàn ghế gỗ, chiếc quạt trần quay chậm, đến những bức tường loang màu thời gian. Có quán lại chỉ đơn giản là một góc nhỏ được chăm chút bằng vài chậu cây, vài bức tranh, nhưng lại đủ khiến người ta muốn quay lại thêm nhiều lần nữa.':
+    'Each hidden “cà-hê” place carries its own story. Some are old houses kept almost intact—from wooden tables and chairs to a slowly turning ceiling fan and time-stained walls. Others are simply a small corner, cared for with a few potted plants and a couple of paintings—yet still enough to make you want to return again and again.',
+  'Tôi không nhớ mình đã đi bao nhiêu quán như thế, chỉ nhớ cảm giác mỗi lần rẽ vào một con ngõ nhỏ, tìm thấy một quán cà phê mới, giống như vừa khám phá ra một bí mật nho nhỏ của thành phố. Và có lẽ, chính những “bí mật” ấy đã làm cho Nghệ An — trong mắt tôi — không chỉ là nơi để sống, mà còn là nơi để cảm, để chậm lại, và để yêu theo một cách rất riêng.':
+    'I cannot remember how many such places I have visited; I only remember the feeling each time I turn into a narrow alley and find a new café—like discovering a small secret of the city. And perhaps those very “secrets” are what make Nghệ An—through my eyes—not only a place to live, but a place to feel, to slow down, and to love in a very personal way.',
+  'Có thể với nhiều người, đó chỉ là những quán cà phê bình thường. Nhưng với tôi, đó là những khoảng lặng có hình hài — nơi mỗi tách cà phê không chỉ có vị đắng, mà còn có cả ký ức, cảm xúc, và một chút gì đó rất khó gọi tên.':
+    'To many people, they may be just ordinary cafés. But to me, they are silence given shape—where each cup tastes not only of bitterness, but also of memory, emotion, and something that is hard to name.',
+  'Ngôn ngữ quê hương - tiếng đất mẹ': 'The language of home — the voice of the motherland',
+  'Giọng Nghệ mộc mạc như đất cát miền Trung — nơi ngôn ngữ không chỉ để nói, mà để nhớ, để thuộc về, và để giữ quê hương ở thật gần.':
+    'The Nghệ accent is as raw as Central Vietnam’s soil—where language is not only for speaking, but for remembering, belonging, and keeping home close.',
+  'Nhiều người khi đến thăm Nghệ An, dù là khách lạ ghé qua hay những người con xa xứ vừa chạm lại ngõ quê, đều khẽ chững lại trước tiếng nói nơi đây. Nó không “dễ nghe” theo cách tròn trịa, mềm mại; mà có gì đó mộc, thô, như chính đất cát miền Trung – nắng gắt, gió Lào, và cả những mùa mưa dầm dai dẳng. Có người nghe lần đầu thì bật cười, có người ngơ ngác không hiểu, còn tôi – một đứa lớn lên cùng thứ âm thanh ấy – lại thấy trong đó là cả một bầu trời ký ức.':
+    'Many people who visit Nghệ An—whether passing strangers or those returning home after years away—pause for a moment at the sound of the local speech. It is not “easy on the ear” in a rounded, gentle way; it is raw and earthy, like Central Vietnam’s soil—harsh sun, Lao winds, and long, persistent rainy seasons. Some laugh the first time they hear it, some look puzzled and do not understand; but I—raised within that sound—hear an entire sky of memories inside it.',
+  'Ngày bé, tôi từng nghĩ giọng Nghệ là điều gì đó… cần phải giấu đi. Những lần ra ngoài, tôi tập nói tròn vành rõ chữ, cố uốn từng âm cho “giống người ta”, như thể đang mặc một chiếc áo không thuộc về mình. Nhưng lạ thay, cứ mỗi lần nghe ai đó vô tình buông một câu “mi đi mô rứa?”, tim tôi lại khẽ rung lên, như có ai gọi đúng tên mình giữa một đám đông xa lạ.':
+    'As a child, I used to think the Nghệ accent was something… to hide. When I went out, I practiced speaking clearly, shaping each sound to “fit in”, as if wearing a jacket that did not belong to me. Yet strangely, whenever I heard someone casually say “mi đi mô rứa?”, my heart would tremble—like someone had called my true name in a crowd of strangers.',
+  'Giờ đây, khi đi xa hơn, gặp nhiều người hơn, tôi mới hiểu: ngôn ngữ không chỉ là công cụ để giao tiếp, mà còn là nơi trú ngụ của cảm xúc. Giọng Nghệ có thể khó nghe với người ngoài, nhưng với tôi, đó là giọng của mẹ gọi bữa cơm chiều, là tiếng bà kể chuyện bên bếp lửa, là âm thanh của những buổi trưa hè ve kêu râm ran ngoài hiên. Nó không chỉ là “cách nói”, mà là cách quê hương ở lại trong mỗi con người.':
+    'Now, after traveling farther and meeting more people, I understand: language is not only a tool for communication, but also a shelter for emotions. The Nghệ accent may be hard for outsiders to catch, but to me it is my mother calling us to dinner, my grandmother telling stories by the fire, and the sound of summer noons with cicadas singing on the porch. It is not only “a way of speaking”, but the way home remains within each person.',
+  'Ngôn ngữ quê hương, suy cho cùng, không cần phải hoàn hảo. Nó chỉ cần đủ chân thật để khi ta cất lên, ta biết mình thuộc về đâu. Và dù có đi xa đến mấy, chỉ cần còn giữ được “tiếng đất mẹ” trong lòng, thì quê hương vẫn luôn ở rất gần.':
+    'In the end, the language of home does not need to be perfect. It only needs to be real enough that when we speak, we know where we belong. And no matter how far we go, as long as we keep the “voice of the motherland” in our hearts, home is always close.',
+  '6 phút': '6 minutes',
   'Hành trình': 'Journey',
+  'Hoàn hảo': 'Perfect',
   'Hoàn hảo.': 'Perfect.',
   'Lựa chọn dịch vụ phù hợp với nhu cầu của bạn.': 'Choose services that fit your needs.',
   'Tùy chỉnh': 'Customize',
@@ -361,6 +460,7 @@ const en: Translations = {
   'Khởi hành': 'Depart',
   'Nhận vé điện tử và sẵn sàng cho chuyến đi.': 'Receive e-tickets and get ready to go.',
   'Danh mục.': 'Categories.',
+  'Danh mục': 'Categories',
   'Hỗ trợ đặt lịch?': 'Need booking support?',
   'Gọi ngay cho chúng tôi để được tư vấn miễn phí 24/7.': 'Call us for free 24/7 consultation.',
   '3-5 sao sang trọng': 'Luxury 3–5 stars',
@@ -390,6 +490,7 @@ const en: Translations = {
   'Từ': 'From',
   'Đặt ngay': 'Book now',
   'Cam kết dịch vụ.': 'Service commitment.',
+  'Cam kết dịch vụ': 'Service commitment',
   'Chúng tôi kết nối bạn với những đối tác uy tín nhất để đảm bảo mỗi chuyến đi đều là một kỷ niệm đẹp.':
     'We connect you with trusted partners to ensure every trip becomes a beautiful memory.',
   'An toàn tuyệt đối': 'Maximum safety',
@@ -409,20 +510,20 @@ const en: Translations = {
   'Đừng bỏ lỡ những ưu đãi đặc biệt dành riêng cho khách hàng đặt lịch sớm. Hãy để chúng tôi chăm sóc mọi chi tiết cho chuyến đi của bạn.':
     "Don't miss special offers for early bookings. Let us take care of every detail of your trip.",
   'Khám phá ưu đãi': 'Explore offers',
-  'Nghệ An in {month}': 'Nghệ An in {month}',
+  'Nghệ An in {month}': 'Nghe An in {month}',
   'Xem tất cả điểm đến': 'View all destinations',
   'Trải nghiệm độc đáo': 'Unique experiences',
   'Hành trình của những cảm xúc': 'A journey of emotions',
-  'Hương vị và tâm hồn xứ Nghệ': 'Flavors and soul of Nghệ',
+  'Hương vị và tâm hồn xứ Nghệ': 'Flavors and soul of Nghe',
   'Hành trình của bạn bắt đầu từ đây': 'Your journey starts here',
   'Dịch vụ nổi bật': 'Featured service',
   'Tư vấn lịch trình 1-1 cùng chuyên gia bản địa.': '1:1 itinerary consultation with local experts.',
-  'Thiết kế hành trình của riêng bạn.': 'Design your own journey.',
+  'Thiết kế hành trình của riêng bạn': 'Design your own journey',
   'Chúng tôi không chỉ cung cấp thông tin, chúng tôi cung cấp giải pháp toàn diện để bạn tận hưởng Nghệ An một cách trọn vẹn nhất.':
-    'We don’t just provide information—we deliver comprehensive solutions so you can experience Nghệ An to the fullest.',
+    'We don’t just provide information—we deliver comprehensive solutions so you can experience Nghe An to the fullest.',
   'Cộng đồng & Kết nối': 'Community & Connection',
-  'Xứ Nghệ': 'Nghệ land',
-  'cùng người bản địa.': 'with locals.',
+  'Xứ Nghệ': 'Nghe land',
+  'cùng người bản địa': 'with locals',
   'Không chỉ là một chuyến đi, đó là sự kết nối chân thực. Hãy để những người con Nghệ An kể cho bạn nghe những câu chuyện mà sách vở chưa từng nhắc tới.':
     'More than a trip—it’s an authentic connection. Let locals tell you stories that books never mention.',
   'Tìm hướng dẫn viên': 'Find a guide',
@@ -439,6 +540,7 @@ const en: Translations = {
   'Hỗ trợ 24/7': '24/7 support',
   Có: 'Yes',
   'khám phá.': 'discovery.',
+  'khám phá': 'discovery',
   '"Mỗi chuyến đi là một chương mới trong cuốn sách cuộc đời."':
     '"Every trip is a new chapter in the book of life."',
   'Một hành trình được thiết kế tỉ mỉ để bạn cảm nhận trọn vẹn vẻ đẹp và tâm hồn của mảnh đất Nghệ An.':
@@ -464,9 +566,18 @@ const en: Translations = {
     "Check in at Thanh Chương Tea Island—Nghệ An’s “inland Hạ Long”—before wrapping up the journey.",
   'Kết nối': 'Connect',
   'mọi miền.': 'everywhere.',
+  'mọi miền': 'everywhere',
   'Nghệ An là đầu mối giao thông quan trọng, giúp bạn dễ dàng tiếp cận bằng mọi phương tiện với hệ thống hạ tầng hiện đại và thuận tiện nhất khu vực miền Trung.':
     'Nghệ An is a key transportation hub, making it easy to reach by any means thanks to modern and convenient infrastructure in Central Vietnam.',
   'DI CHUYỂN • NGHỆ AN • VIỆT NAM • 2024': 'TRANSPORTATION • NGHỆ AN • VIETNAM • 2024',
+  'Đường sắt': 'Rail',
+  'Đường bộ': 'Road',
+  'Sân bay Quốc tế Vinh kết nối trực tiếp với Hà Nội, TP.HCM, Đà Nẵng và các thành phố lớn.':
+    'Vinh International Airport offers direct connections to Hanoi, Ho Chi Minh City, Da Nang, and other major cities.',
+  'Ga Vinh là điểm dừng quan trọng trên tuyến Bắc - Nam, thuận tiện cho việc di chuyển chậm và ngắm cảnh.':
+    'Vinh Station is a major stop on the North–South line—ideal for slower travel and sightseeing.',
+  'Hệ thống xe khách chất lượng cao và đường cao tốc giúp việc di chuyển từ Hà Nội chỉ mất khoảng 4-5 giờ.':
+    'High-quality intercity buses and expressways make the trip from Hanoi take only about 4–5 hours.',
   '15+ chuyến mỗi ngày': '15+ flights daily',
   'Tuyến SE1, SE3, SE5, SE7': 'SE1, SE3, SE5, SE7 lines',
   'Xe giường nằm 24/7': 'Sleeper buses 24/7',
@@ -476,6 +587,10 @@ const en: Translations = {
   'Bốn mùa': 'Four seasons',
   'Bốn mùa Nghệ An': 'Nghệ An seasons',
   'thay áo.': 'change their colors.',
+  'thay áo': 'change their colors',
+  'Lướt sang trái/phải để xem các mùa': 'Swipe left/right to view seasons',
+  'Xem mùa trước': 'Previous season',
+  'Xem mùa tiếp theo': 'Next season',
   'Mùa Xuân (Tháng 2 - 4)': 'Spring (Feb–Apr)',
   'Thời tiết mát mẻ, lý tưởng cho các hoạt động tâm linh, lễ hội đầu năm và thăm quê Bác.':
     'Cool weather—ideal for spiritual sites, early-year festivals, and visiting President Hồ’s homeland.',
@@ -489,6 +604,7 @@ const en: Translations = {
     'A perfect trip starts with small preparations. Make sure you pack the essentials.',
   'Chuẩn bị': 'Pack',
   'chu đáo.': 'smart.',
+  'chu đáo': 'smart',
   'Giấy tờ tùy thân': 'ID documents',
   'CCCD hoặc Hộ chiếu là vật bất ly thân cho mọi thủ tục lưu trú và di chuyển.':
     'Your ID card or passport is essential for accommodation and transportation procedures.',
@@ -507,6 +623,7 @@ const en: Translations = {
   'Hỗ trợ tình nguyện viên': 'Volunteer support',
   'Đồng hành': 'Accompany',
   'tận tâm.': 'with dedication.',
+  'tận tâm': 'with dedication',
   'Đội ngũ tình nguyện viên am hiểu bản địa luôn sẵn sàng lắng nghe và tư vấn lộ trình cá nhân hóa, giúp bạn chạm đến những góc khuất đẹp nhất của Xứ Nghệ.':
     'Local-savvy volunteers are ready to listen and personalize your route—helping you reach Nghệ’s most beautiful hidden corners.',
   'Tư vấn 24/7': '24/7 consultation',
@@ -519,6 +636,7 @@ const en: Translations = {
   'trải nghiệm,': 'experience,',
   'Kế hoạch là': 'planning is',
   'khởi đầu.': 'the start.',
+  'khởi đầu': 'the start',
   'Hãy để chúng tôi đồng hành cùng bạn trong từng bước chân khám phá mảnh đất Nghệ An đầy ân tình.':
     'Let us accompany you on every step as you explore the warm-hearted land of Nghệ An.',
   'Di sản & Hương vị': 'Heritage & Flavors',
@@ -532,6 +650,7 @@ const en: Translations = {
     '"People here eat spicy to face the cold, salty to remember the sea, and cook with a sincere heart."',
   'Triết lý vị giác': 'Culinary philosophy',
   'Mặn mòi': 'Salty',
+  'vị đất Lam': 'taste of the Lam land',
   'vị đất Lam.': 'taste of the Lam land.',
   'Ẩm thực Nghệ An là sự kết tinh của sự kiên cường và khéo léo. Không phô trương, nhưng mỗi món ăn đều mang trong mình một câu chuyện về lịch sử và con người.':
     'Nghệ An cuisine is distilled resilience and craftsmanship—unpretentious, yet every dish carries a story of history and people.',
@@ -547,6 +666,7 @@ const en: Translations = {
     'A gentle sweetness from endless sugarcane fields—often used instead of refined sugar.',
   'Danh mục đặc sản': 'Signature dishes',
   'Tinh hoa': 'The finest',
+  'ẩm thực': 'cuisine',
   'ẩm thực.': 'cuisine.',
   '"Ăn một miếng bánh mướt, nghe cả cánh đồng lúa chín trong lòng."':
     '"One bite of bánh mướt and you can feel a whole ripe rice field in your heart."',
@@ -555,9 +675,15 @@ const en: Translations = {
   'Kẹo Cu Đơ': 'Cu Đơ peanut candy',
   'Sự kết hợp hoàn hảo giữa mật mía, lạc rang và gừng cay.':
     'A perfect blend of molasses, roasted peanuts, and spicy ginger.',
+  'Cháo canh thành Vinh': 'Vinh-style rice noodle soup',
+  'Sự kết hợp hài hòa giữa sợi bánh dai mềm, nước dùng thanh ngọt và các loại topping như thịt heo, chả, trứng cút luộc, thịt cá hoặc tôm.':
+    'A harmonious combination of chewy-soft noodles, a light and sweet broth, and toppings such as pork, Vietnamese pork roll, boiled quail eggs, fish, or shrimp.',
   'Nhút Thanh Chương': 'Thanh Chương fermented jackfruit',
   'Món ăn dân dã làm từ xơ mít non, biểu tượng của sự chắt chiu.':
     'A rustic dish made from young jackfruit fiber—symbolizing thrift and ingenuity.',
+  'Thịt me, thịt nghé Nam Nghĩa': 'Nam Nghĩa veal',
+  'Thịt me, thịt nghé Nam Nghĩa có vị ngọt, dai dai, giòn sần sật từ lớp da và mùi thơm hương đồng cỏ nội độc đáo.':
+    'Sweet and slightly chewy, with a pleasant crunch from the skin and a distinctive, rustic aroma reminiscent of open fields and pasturelands.',
   'Súp Lươn Vinh -': 'Vinh eel soup -',
   'Đánh thức mọi giác quan.': 'Awakens every sense.',
   'Thịt lươn đồng béo ngậy, hành tăm thơm nồng và vị cay đặc trưng tạo nên một trải nghiệm ẩm thực không thể nào quên khi đặt chân đến thành phố Vinh.':
@@ -566,6 +692,7 @@ const en: Translations = {
   'Đặc sản Nam Đàn': 'Nam Đàn specialty',
   'Di sản phi vật thể': 'Intangible heritage',
   'Ví Giặm': 'Ví Giặm',
+  'ân tình': 'of affection',
   'ân tình.': 'of affection.',
   '"Hát cho tan hết nỗi buồn, hát cho dòng Lam xanh mãi, hát cho tình người Nghệ mãi sắt son."':
     '"Sing to dissolve sadness, sing for the Lam River to stay blue, sing for Nghệ people’s steadfast love."',
@@ -579,6 +706,7 @@ const en: Translations = {
   'Biểu diễn dân ca': 'Folk performance',
   'UNESCO, 2014': 'UNESCO, 2014',
   'Bàn tay': 'Hands',
+  'tài hoa': 'of craftsmanship',
   'tài hoa.': 'of craftsmanship.',
   'Những làng nghề hàng trăm năm tuổi vẫn đang âm thầm giữ lửa, biến những nguyên liệu thô sơ thành những tác phẩm nghệ thuật đầy hồn cốt.':
     'Centuries-old craft villages keep the flame alive—turning humble materials into soulful works of art.',
@@ -593,6 +721,7 @@ const en: Translations = {
   'Sự dẻo dai của tâm hồn Việt.': 'The resilient spirit of Vietnam.',
   'Lịch trình văn hóa': 'Cultural calendar',
   'Mùa lễ hội': 'Festival season',
+  'trường tồn': 'endures',
   'trường tồn.': 'endures.',
   'Tháng Giêng': 'January',
   'Tháng Ba': 'March',
@@ -610,6 +739,7 @@ const en: Translations = {
   'Hương vị là': 'Flavor is',
   'ký ức,': 'memory,',
   'Văn hóa là': 'culture is',
+  'tâm hồn': 'the soul',
   'tâm hồn.': 'the soul.',
   'DI SẢN & HỒN ẨM THỰC XỨ NGHỆ': 'NGHE AN HERITAGE & CULINARY SOUL',
   'Bê Thui': 'Grilled veal',
@@ -629,6 +759,7 @@ const en: Translations = {
   'Người bạn bản địa': 'Local friend',
   'Hành trình cảm xúc': 'Emotional journey',
   'Trải': 'Exper',
+  'nghiệm': 'iences',
   'nghiệm.': 'iences.',
   'Những hoạt động độc đáo, những hành trình đầy cảm hứng đang chờ đón bạn tại mảnh đất miền Trung đầy nắng và gió.':
     'Unique activities and inspiring journeys await you in this sunny, windswept land of Central Vietnam.',
@@ -666,6 +797,8 @@ const en: Translations = {
   'Du lịch một mình': 'Solo traveler',
   'Yêu di sản': 'Heritage lover',
   'Khám phá ẩm thực': 'Food explorer',
+  'Linh (24 tuổi)': 'Linh (24 years old)',
+  'Bác Hùng (60 tuổi)': 'Uncle Hung (60 years old)',
   'Lần đầu trekking Pù Mát, mệt lả nhưng khoảnh khắc chạm tay vào dòng thác Kèm, mọi mệt mỏi tan biến. Nghệ An hoang sơ hơn tôi tưởng.':
     'My first trek in Pù Mát was exhausting, but the moment I touched the Kèm waterfall, all fatigue vanished. Nghệ An is wilder than I imagined.',
   'Về thăm quê Bác vào một chiều sen nở, lòng bâng khuâng lạ thường. Sự giản dị ở đây dạy tôi nhiều điều về cuộc sống.':
@@ -677,6 +810,7 @@ const en: Translations = {
   'Đánh giá': 'Rating',
   '1.2k+ đã trải nghiệm': '1.2k+ have experienced it',
   'Nhịp sống': 'Life rhythm',
+  'bản địa': 'of locals',
   'bản địa.': 'of locals.',
   '"Đừng chỉ là du khách, hãy trở thành một phần của mảnh đất này qua những hoạt động thường nhật."':
     "\"Don't just be a tourist—become part of this land through everyday activities.\"",
@@ -685,12 +819,14 @@ const en: Translations = {
   'Nhật ký hành trình': 'Travel diary',
   'Nghe': 'Listen',
   'Dừng': 'Stop',
+  'người đi trước': 'to those who came before',
   'người đi trước.': 'to those who came before.',
   'Không phải lời khuyên từ chuyên gia, đây là những mảnh ghép cảm xúc thực tế từ những tâm hồn đã trót yêu mảnh đất này.':
     'Not expert advice—these are real emotional fragments from people who have fallen in love with this land.',
   'Xem thêm hàng ngàn câu chuyện': 'Read thousands more stories',
   'Viết nên': 'Write',
   'câu chuyện': 'the story',
+  'của bạn': 'of yours',
   'của bạn.': 'of yours.',
   'Mỗi bước chân tại Nghệ An là một trang mới trong cuốn nhật ký hành trình của cuộc đời bạn.':
     'Every step in Nghệ An is a new page in the travel diary of your life.',
@@ -701,16 +837,21 @@ const en: Translations = {
   'Di chuyển & Vận tải': 'Transport & Logistics',
   'Dịch vụ đưa đón sân bay Vinh, thuê xe tự lái hoặc xe du lịch chất lượng cao cho cả gia đình.':
     'Airport transfers in Vinh, self-drive rentals, or premium tour vehicles for the whole family.',
+  'Thuê xe máy': 'Motorbike rental',
+  'Linh hoạt & Tiết kiệm': 'Flexible & affordable',
+  'Xe điện': 'Electric',
+  'Xe số': 'Manual',
   'Thuê xe': 'Car rental',
   'Lưu trú & Nghỉ dưỡng': 'Accommodation & Retreats',
   'Từ những homestay mộc mạc tại bản làng đến các resort 5 sao đẳng cấp tại Cửa Lò.':
-    'From rustic village homestays to upscale 5-star resorts in Cửa Lò.',
+    'From rustic village homestays to upscale 5-star resorts in Cua Lo.',
   'Đặt phòng': 'Book rooms',
   'Hướng dẫn viên bản địa': 'Local guides',
   'Kết nối với những người con xứ Nghệ am hiểu văn hóa, lịch sử để chuyến đi thêm phần ý nghĩa.':
-    'Connect with Nghệ locals who know the culture and history to make your trip more meaningful.',
+    'Connect with Nghe An locals who know the culture and history to make your trip more meaningful.',
   'Dịch vụ Guide': 'Guide service',
-  'Trải nghiệm đặt dịch vụ cao cấp': 'Premium Booking Experience',
+  'Trải nghiệm đặt dịch vụ cao cấp': 'Premium Accomodations Experience',
+  'Cách đặt dịch vụ?': 'How to book?',
   'ĐẶT': 'BOOK',
   'DỊCH VỤ NGHE AN TRAVEL • 2026': 'NGHE AN TRAVEL SERVICES • 2026',
   'Trải nghiệm du lịch': 'Travel experience',
@@ -721,17 +862,20 @@ const en: Translations = {
   'Cài đặt cookie': 'Cookie Settings',
   'Hồ sơ hành chính & địa lý': 'Administrative & Geographic Profile',
   'Điểm': 'Destin',
+  'đến': 'ations',
   'đến.': 'ations.',
   'Việt Nam': 'Vietnam',
   'Phong cảnh Nghệ An': 'Nghệ An landscape',
   'Phong cảnh huyền ảo': 'Atmospheric landscape',
   'Sinh thái vùng': 'Regional Ecology',
   'Ba vùng': 'Three',
+  'sinh thái': 'ecosystems',
   'sinh thái.': 'ecosystems.',
   'Đơn vị hành chính': 'Administrative Units',
   'Trung tâm chiến lược': 'Strategic Hubs',
   'Khám phá bản đồ tương tác': 'Explore the interactive map',
   'Nghệ An không chỉ là một tỉnh,': 'Nghệ An is not just a province,',
+  'đó là một bản đồ di sản': "it's a heritage map",
   'đó là một bản đồ di sản.': "it's a heritage map.",
   'Vùng Duyên Hải': 'Coastal Region',
   'Vùng Đồng Bằng': 'Plains Region',
@@ -753,6 +897,12 @@ const en: Translations = {
   'Thành phố Vinh': 'Vinh City',
   'Thị xã Cửa Lò': 'Cửa Lò Town',
   'Huyện Nam Đàn': 'Nam Đàn District',
+  'Đô thị loại I, trái tim của Xứ Nghệ với nhịp sống hiện đại và bề dày lịch sử cách mạng.':
+    'A first-tier city—the beating heart of Nghệ An—with modern rhythms and a proud revolutionary history.',
+  'Một trong những bãi biển đẹp nhất miền Trung với hạ tầng du lịch đồng bộ và hiện đại.':
+    'One of Central Vietnam’s most beautiful beaches, featuring comprehensive, modern tourism infrastructure.',
+  'Quê hương của Chủ tịch Hồ Chí Minh và nhiều vĩ nhân, trung tâm du lịch văn hóa tâm linh.':
+    'The homeland of President Hồ Chí Minh and many luminaries—a center of cultural and spiritual tourism.',
   'TX Cửa Lò': 'Cửa Lò Town',
   'TX Thái Hòa': 'Thái Hòa Town',
   'TX Hoàng Mai': 'Hoàng Mai Town',
@@ -781,8 +931,6 @@ const en: Translations = {
   'Ưu đãi giới hạn': 'Limited offer',
   'Vòng quay': 'Lucky',
   'may mắn.': 'wheel.',
-  'Quay một lần để nhận voucher giảm giá từ 10% đến Chuyến đi miễn phí. Tỉ lệ “Chúc bạn may mắn lần sau” là cao nhất.':
-    'Spin once to get discount vouchers from 10% up to a free trip. The “Better luck next time” chance is the highest.',
   Voucher: 'Voucher',
   'Giảm 10%–50% cho dịch vụ.': '10%–50% off services.',
   'Giải đặc biệt': 'Grand prize',
@@ -831,6 +979,7 @@ const en: Translations = {
     'The page still works with the destination list and route-building feature. The base map will recover once the connection is stable.',
   'Tải lại': 'Reload',
   'Nghệ An Live': 'Nghệ An Live',
+  'trải nghiệm': 'experience',
   'trải nghiệm.': 'experience.',
   'Chọn điểm đến, thêm vào lộ trình và xem đường nối trực tiếp trên bản đồ. Nút toàn màn hình ở góc phải của bản đồ.':
     'Choose places, add them to your route, and see the connecting line directly on the map. Use the fullscreen button at the top-right of the map.',
@@ -864,6 +1013,7 @@ const en: Translations = {
   'THAM GIA': 'JOIN',
   '02. Kết nối': '02. Connection',
   'Cộng đồng.': 'Community.',
+  'Cộng đồng': 'Community',
   'TÌM KIẾM': 'FIND',
   'Trở thành cầu nối văn hóa giữa Xứ Nghệ và thế giới. Chúng tôi đang tìm kiếm những trái tim nhiệt huyết.':
     'Become a cultural bridge between Nghệ and the world. We are looking for passionate hearts.',
@@ -872,6 +1022,7 @@ const en: Translations = {
   'Cơ hội tham gia': 'Opportunities',
   'Vị trí': 'Positions',
   'đang tuyển.': 'open.',
+  'đang tuyển': 'open',
   '12 vị trí': '12 openings',
   '05 vị trí': '5 openings',
   '03 vị trí': '3 openings',
@@ -906,10 +1057,14 @@ const en: Translations = {
   'Đăng ký ứng tuyển': 'Apply to join',
   'Email liên hệ': 'Contact email',
   'Lĩnh vực am hiểu': 'Expertise',
+  'Chọn lĩnh vực': 'Select expertise',
   'VĂN HÓA & LỊCH SỬ': 'CULTURE & HISTORY',
   'ẨM THỰC XỨ NGHỆ': 'NGHỆ CUISINE',
   'THIÊN NHIÊN & TREKKING': 'NATURE & TREKKING',
   'Gửi hồ sơ ngay': 'Submit now',
+  'Vui lòng điền đầy đủ thông tin theo yêu cầu.': 'Please fill in all required information.',
+  'Đăng ký thành công, hãy thường xuyên kiểm tra mail của bạn để nhận thông tin sớm nhất từ chúng tôi!':
+    'Registration successful, please check your email regularly to receive the earliest information from us!',
   'Mã số': 'ID',
   'Khu vực': 'Area',
   'Ngôn ngữ': 'Languages',
@@ -931,6 +1086,7 @@ const en: Translations = {
   'Dành cho khách du lịch': 'For travelers',
   'Sứ giả': 'Ambassadors',
   'Tiêu biểu.': 'Featured.',
+  'Tiêu biểu': 'Featured',
   'Những tình nguyện viên có kinh nghiệm dẫn đoàn phong phú và nhận được nhiều phản hồi tích cực nhất từ du khách.':
     'Volunteers with rich tour-leading experience and the most positive feedback from travelers.',
   '{n} đánh giá': '{n} reviews',
@@ -951,13 +1107,15 @@ const en: Translations = {
   'Gửi yêu cầu hỗ trợ': 'Send request',
   'Cam kết': 'Commitment',
   'Tin cậy.': 'Trust.',
+  'Tin cậy': 'Trust',
   '"Tất cả tình nguyện viên đều được xác minh danh tính và đào tạo kỹ lưỡng. Chúng tôi cam kết mang lại trải nghiệm văn minh, an toàn và đậm chất bản địa cho mọi du khách khi đến với Nghệ An."':
     '"All volunteers are identity-verified and thoroughly trained. We commit to delivering a civilized, safe, and deeply local experience for every traveler visiting Nghệ An."',
   'Tâm điểm': 'Strategic hub',
+  'chiến lược': 'strategy',
   'chiến lược.': 'strategy.',
   '"Những tọa độ vàng định hình tương lai phát triển kinh tế, văn hóa và du lịch của toàn tỉnh."':
     '"Golden coordinates shaping the future of economic, cultural, and tourism development across the province."',
-  'xứ Nghệ': 'of Nghệ An',
+  'xứ Nghệ': 'of Nghe An',
   '"Mô, tê, răng, rứa"': '"Mô, tê, răng, rứa"',
 };
 
@@ -976,6 +1134,14 @@ const applyParams = (template: string, params: Params | undefined) => {
   }, template);
 };
 
+export function stripVietnameseDiacritics(input: string) {
+  return input
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D');
+}
+
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>(() => normalizeLang(localStorage.getItem(STORAGE_KEY)));
 
@@ -987,7 +1153,8 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     const dict = lang === 'en' ? en : undefined;
     const t = (key: string, params?: Params) => {
       const raw = dict?.[key] ?? key;
-      return applyParams(raw, params);
+      const rendered = applyParams(raw, params);
+      return lang === 'en' ? stripVietnameseDiacritics(rendered) : rendered;
     };
     const setLang = (next: Lang) => setLangState(next);
     return { lang, setLang, t };

@@ -232,7 +232,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-12 tracking-tight font-serif"
           >
-            {t('Khám phá trái tim miền Trung.')}
+            {t('Khám phá trái tim miền Trung')}
           </motion.h1>
 
           <motion.div
@@ -439,10 +439,10 @@ export default function Home() {
           {/* Large Featured Card */}
           <Card
             key={destinations[0].id}
-            title={destinations[0].name}
-            subtitle={destinations[0].festival}
+            title={t(destinations[0].name)}
+            subtitle={t(destinations[0].festival)}
             image={destinations[0].image}
-            description={destinations[0].description}
+            description={t(destinations[0].description)}
             link={destinations[0].link}
             variant="editorial"
             aspectRatio="portrait"
@@ -452,10 +452,10 @@ export default function Home() {
           {/* Wide Card */}
           <Card
             key={destinations[1].id}
-            title={destinations[1].name}
-            subtitle={destinations[1].festival}
+            title={t(destinations[1].name)}
+            subtitle={t(destinations[1].festival)}
             image={destinations[1].image}
-            description={destinations[1].description}
+            description={t(destinations[1].description)}
             link={destinations[1].link}
             variant="editorial"
             aspectRatio="wide"
@@ -465,10 +465,10 @@ export default function Home() {
           {/* Regular Cards */}
           <Card
             key={destinations[2].id}
-            title={destinations[2].name}
-            subtitle={destinations[2].festival}
+            title={t(destinations[2].name)}
+            subtitle={t(destinations[2].festival)}
             image={destinations[2].image}
-            description={destinations[2].description}
+            description={t(destinations[2].description)}
             link={destinations[2].link}
             variant="editorial"
             aspectRatio="square"
@@ -477,10 +477,10 @@ export default function Home() {
           
           <Card
             key={destinations[3].id}
-            title={destinations[3].name}
-            subtitle={destinations[3].festival}
+            title={t(destinations[3].name)}
+            subtitle={t(destinations[3].festival)}
             image={destinations[3].image}
-            description={destinations[3].description}
+            description={t(destinations[3].description)}
             link={destinations[3].link}
             variant="editorial"
             aspectRatio="square"
@@ -489,10 +489,10 @@ export default function Home() {
 
           <Card
             key={destinations[4].id}
-            title={destinations[4].name}
-            subtitle={destinations[4].festival}
+            title={t(destinations[4].name)}
+            subtitle={t(destinations[4].festival)}
             image={destinations[4].image}
-            description={destinations[4].description}
+            description={t(destinations[4].description)}
             link={destinations[4].link}
             variant="editorial"
             aspectRatio="wide"
@@ -501,14 +501,27 @@ export default function Home() {
           
           <Card
             key={destinations[5].id}
-            title={destinations[5].name}
-            subtitle={destinations[5].festival}
+            title={t(destinations[5].name)}
+            subtitle={t(destinations[5].festival)}
             image={destinations[5].image}
-            description={destinations[5].description}
+            description={t(destinations[5].description)}
             link={destinations[5].link}
             variant="editorial"
             aspectRatio="portrait"
             className="md:col-span-2 lg:col-span-2 md:row-span-2"
+          />
+
+          <Card
+            key="puxailaileng"
+            title={t('Puxailaileng')}
+            subtitle={t('Đỉnh cao nhất Bắc Trường Sơn')}
+            image={homeBodyImage('Puxailaileng.webp')}
+            imageClassName="object-cover object-bottom scale-125 -translate-y-6"
+            description={t('Đỉnh Puxailaileng (Kỳ Sơn, Nghệ An) cao khoảng 2.720m — cung trekking gần 20km qua rừng sa mu, pơ mu và cột mốc 422 trước khi chạm “đất cao, trời thấp”.')}
+            link="https://baonghean.vn/hanh-trinh-chinh-phuc-dinh-nui-puxailaileng-cao-nhat-bac-truong-son-10215374.html"
+            variant="editorial"
+            aspectRatio="wide"
+            className="md:col-span-2 md:col-start-3 md:row-start-3 lg:col-span-4 lg:col-start-1 lg:row-start-4"
           />
         </div>
         <div className="mt-16 text-center">
@@ -570,7 +583,11 @@ export default function Home() {
       <Section title={t('Ẩm thực & Văn hóa')} subtitle={t('Hương vị và tâm hồn xứ Nghệ')} dark>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {foodAndCulture.map((item) => (
-            <div key={item.id} className="group relative overflow-hidden rounded-sm aspect-video">
+            <div
+              key={item.id}
+              className="group relative overflow-hidden rounded-sm aspect-video cursor-pointer"
+              onClick={() => navigate('/food-culture')}
+            >
               <img
                 src={item.image}
                 alt={item.name}
@@ -582,7 +599,10 @@ export default function Home() {
                 <p className="text-gray-300 mb-6 max-w-md">{t(item.description)}</p>
                 <button
                   type="button"
-                  onClick={() => navigate('/food-culture')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/food-culture');
+                  }}
                   className="flex items-center space-x-2 text-white font-bold uppercase tracking-widest text-xs"
                 >
                   <span>{t('Khám phá ngay')}</span>
@@ -643,7 +663,7 @@ export default function Home() {
               <div className="mb-20">
                 <span className="text-red-600 font-bold tracking-[0.4em] uppercase text-[10px] mb-4 block">{t('Lên kế hoạch')}</span>
                 <h2 className="text-5xl md:text-6xl font-bold font-serif leading-tight text-gray-900 mb-6">
-                  {t('Thiết kế hành trình của riêng bạn.')}
+                  {t('Thiết kế hành trình của riêng bạn')}
                 </h2>
                 <p className="text-gray-500 text-lg leading-relaxed">
                   {t('Chúng tôi không chỉ cung cấp thông tin, chúng tôi cung cấp giải pháp toàn diện để bạn tận hưởng Nghệ An một cách trọn vẹn nhất.')}
@@ -759,7 +779,7 @@ export default function Home() {
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400">
                     {t('Xứ Nghệ')}
                   </span> <br />
-                  {t('cùng người bản địa.')}
+                  {t('cùng người bản địa')}
                 </h2>
                 <p className="text-gray-400 text-xl max-w-xl mb-12 leading-relaxed font-light">
                   {t('Không chỉ là một chuyến đi, đó là sự kết nối chân thực. Hãy để những người con Nghệ An kể cho bạn nghe những câu chuyện mà sách vở chưa từng nhắc tới.')}

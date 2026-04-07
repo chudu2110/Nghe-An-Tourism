@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
-import { ArrowRight, Clock, ChevronRight, Camera } from 'lucide-react';
+import { ArrowRight, Clock, ChevronRight, Camera, ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n';
 
@@ -61,8 +61,29 @@ const transport = [
 export default function Planning() {
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const navigate = useNavigate();
+  const seasonCards = useMemo(
+    () => [
+      {
+        season: t('Mùa Xuân (Tháng 2 - 4)'),
+        desc: t('Thời tiết mát mẻ, lý tưởng cho các hoạt động tâm linh, lễ hội đầu năm và thăm quê Bác.'),
+        image: planningImage('Mùa xuân.jpg'),
+      },
+      {
+        season: t('Mùa Hè (Tháng 5 - 8)'),
+        desc: t('Thời điểm tuyệt vời nhất để nghỉ mát tại biển Cửa Lò, Quỳnh Bảng hay Bãi Lữ.'),
+        image: planningImage('Mùa hè.jpg'),
+      },
+      {
+        season: t('Mùa Thu - Đông (Tháng 9 - 1)'),
+        desc: t('Mùa của hoa hướng dương (tháng 12) và khám phá vẻ đẹp hùng vĩ của miền Tây Nghệ An.'),
+        image: planningImage('Mùa đông.jpg'),
+      },
+    ],
+    [t]
+  );
+  const [activeSeasonIndex, setActiveSeasonIndex] = useState(0);
 
   return (
     <div className="pt-20 bg-[#faf9f6] overflow-hidden selection:bg-red-100 selection:text-red-900">
@@ -95,7 +116,7 @@ export default function Planning() {
                     {t('Hướng dẫn du lịch')}
                   </span>
                 </div>
-                <h1 className="text-7xl md:text-[10rem] font-bold mb-10 font-serif leading-[0.8] tracking-tighter">
+                <h1 className={`text-5xl md:text-[8.5rem] font-bold mb-10 font-serif ${lang === 'vi' ? 'leading-[1.2]' : 'leading-[1.0]'} tracking-tighter`}>
                   {t('Lên kế hoạch')}
                 </h1>
                 <p className="text-gray-400 text-xl max-w-2xl mb-12 leading-relaxed font-light">
@@ -128,7 +149,7 @@ export default function Planning() {
             <div className="space-y-6">
               <span className="text-red-600 font-bold tracking-[0.4em] uppercase text-[10px] block">{t('Lịch trình gợi ý')}</span>
               <h2 className="text-6xl md:text-9xl font-bold font-serif leading-none tracking-tighter text-gray-900">
-                {t('Hành trình')} <br /> <span className="text-red-600 italic">{t('khám phá.')}</span>
+                {t('Hành trình')} <br /> <span className="text-red-600 italic">{t('khám phá')}</span>
               </h2>
             </div>
             <div className="max-w-xs text-right mt-12 md:mt-0">
@@ -150,15 +171,16 @@ export default function Planning() {
                     </p>
                   </div>
                   <div className="pt-8">
-                    <button
-                      type="button"
-                      onClick={() => navigate('/booking')}
+                    <a
+                      href="https://vinwonders.com/vi/wonderpedia/news/du-lich-nghe-an-2-ngay-1-dem/"
+                      target="_blank"
+                      rel="noreferrer"
                       className="group flex items-center space-x-8 text-gray-900 font-bold uppercase tracking-widest text-xs"
                     >
-                      <span>{t('Tải PDF chi tiết')}</span>
+                      <span>{t('Tìm hiểu thêm')}</span>
                       <div className="w-20 h-[1px] bg-gray-200 group-hover:w-32 group-hover:bg-red-600 transition-all duration-500" />
                       <ArrowRight size={20} className="group-hover:text-red-600 transition-colors" />
-                    </button>
+                    </a>
                   </div>
                 </div>
                 
@@ -183,7 +205,7 @@ export default function Planning() {
                           <img 
                             src={day.image} 
                             alt={t(day.title)} 
-                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-100" 
+                            className="w-full h-full object-cover transition-all duration-1000 scale-110 group-hover:scale-100" 
                             referrerPolicy="no-referrer" 
                           />
                           <div className="absolute inset-0 bg-red-600/10 mix-blend-multiply opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -208,13 +230,20 @@ export default function Planning() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-end justify-between mb-32 gap-12">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col lg:flex-row items-end justify-between mb-32 gap-12"
+          >
             <div className="lg:w-1/2 space-y-8">
               <div className="inline-block px-4 py-1 bg-red-600 text-white text-[10px] font-bold uppercase tracking-[0.3em]">
                 {t('Hướng dẫn di chuyển')}
               </div>
-              <h2 className="text-6xl md:text-8xl font-bold font-serif leading-[0.9] tracking-tighter">
-                {t('Kết nối')} <br /> <span className="text-red-600 italic">{t('mọi miền.')}</span>
+              <h2 className={`text-6xl md:text-8xl font-bold font-serif tracking-tighter ${lang === 'vi' ? 'leading-[1.05]' : 'leading-[0.9]'}`}>
+                {t('Kết nối')}
+                <span className={`block text-red-600 italic ${lang === 'vi' ? 'mt-6' : 'mt-3'}`}>{t('mọi miền')}</span>
               </h2>
             </div>
             <div className="lg:w-1/3">
@@ -222,19 +251,23 @@ export default function Planning() {
                 {t('Nghệ An là đầu mối giao thông quan trọng, giúp bạn dễ dàng tiếp cận bằng mọi phương tiện với hệ thống hạ tầng hiện đại và thuận tiện nhất khu vực miền Trung.')}
               </p>
             </div>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {transport.map((item, i) => (
-              <div 
+              <motion.div 
                 key={i} 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.35 }}
+                transition={{ duration: 0.8, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
                 className={`group relative transition-all duration-1000 ${i === 1 ? 'md:mt-24' : i === 2 ? 'md:mt-48' : ''}`}
               >
                 <div className="relative aspect-[3/4] overflow-hidden mb-8 bg-gray-100 shadow-2xl">
                   <img 
                     src={item.image} 
                     alt={t(item.title)}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-100"
+                    className="w-full h-full object-cover transition-all duration-1000 scale-110 group-hover:scale-100"
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
@@ -270,7 +303,7 @@ export default function Planning() {
                     {t('Đặt vé ngay')}
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -283,15 +316,27 @@ export default function Planning() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
             <div className="lg:col-span-5 relative">
-              <div className="relative z-10 aspect-[4/5] rounded-[5rem] overflow-hidden shadow-[60px_60px_100px_-20px_rgba(0,0,0,0.15)]">
+              <motion.div
+                initial={{ opacity: 0, x: -30, scale: 0.98 }}
+                whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                viewport={{ once: true, amount: 0.35 }}
+                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                className="relative z-10 aspect-[4/5] rounded-[5rem] overflow-hidden shadow-[60px_60px_100px_-20px_rgba(0,0,0,0.15)]"
+              >
                 <img 
                   src={planningImage('4 mùa.webp')} 
                   alt={t('Bốn mùa Nghệ An')}
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
-              </div>
-              <div className="absolute -bottom-10 -left-10 w-64 bg-white p-8 rounded-2xl shadow-2xl hidden md:block border border-gray-50 z-20">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.35 }}
+                transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute -bottom-10 -left-10 w-64 bg-white p-8 rounded-2xl shadow-2xl hidden md:block border border-gray-50 z-20"
+              >
                 <div className="space-y-4">
                   <div className="text-red-600 font-serif text-4xl">28°C</div>
                   <p className="text-gray-900 font-bold text-base font-serif italic leading-tight">
@@ -299,35 +344,97 @@ export default function Planning() {
                   </p>
                   <p className="text-gray-400 text-[9px] uppercase tracking-[0.2em] font-bold">{t('Thời tiết Xứ Nghệ')}</p>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
             <div className="lg:col-span-7 space-y-12 relative z-30">
-              <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.35 }}
+                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                className="space-y-6"
+              >
                 <div className="flex items-center space-x-4">
                   <div className="h-[1px] w-12 bg-red-600" />
                   <span className="text-red-600 font-bold tracking-[0.4em] uppercase text-[10px]">{t('Thời điểm lý tưởng')}</span>
                 </div>
-                <h2 className="text-6xl md:text-[8rem] font-bold font-serif leading-[0.85] tracking-tighter text-gray-900">
-                  {t('Bốn mùa')} <br /> <span className="text-red-600 italic">{t('thay áo.')}</span>
+                <h2 className={`${lang === 'vi' ? 'mt-10' : 'mt-4'} text-6xl md:text-[8rem] font-bold font-serif leading-[0.85] tracking-tighter text-gray-900`}>
+                  {t('Bốn mùa')} <br /> <span className="text-red-600 italic">{t('thay áo')}</span>
                 </h2>
-              </div>
+              </motion.div>
 
-              <div className="space-y-12 pt-8">
-                {[
-                  { season: t('Mùa Xuân (Tháng 2 - 4)'), desc: t('Thời tiết mát mẻ, lý tưởng cho các hoạt động tâm linh, lễ hội đầu năm và thăm quê Bác.') },
-                  { season: t('Mùa Hè (Tháng 5 - 8)'), desc: t('Thời điểm tuyệt vời nhất để nghỉ mát tại biển Cửa Lò, Quỳnh Bảng hay Bãi Lữ.') },
-                  { season: t('Mùa Thu - Đông (Tháng 9 - 1)'), desc: t('Mùa của hoa hướng dương (tháng 12) và khám phá vẻ đẹp hùng vĩ của miền Tây Nghệ An.') },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-start space-x-6 group">
-                    <div className="w-1 h-1 bg-red-600 rounded-full mt-2 group-hover:scale-150 transition-transform" />
-                    <div className="space-y-2">
-                      <h4 className="font-bold text-gray-900 uppercase tracking-widest text-xs">{item.season}</h4>
-                      <p className="text-gray-500 text-sm font-light leading-relaxed max-w-md">{item.desc}</p>
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.35 }}
+                transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                className="pt-8"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div />
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveSeasonIndex((i) => (i - 1 + seasonCards.length) % seasonCards.length);
+                      }}
+                      className="h-10 w-10 rounded-full border border-gray-200 bg-white hover:border-gray-900 hover:text-gray-900 transition-colors flex items-center justify-center"
+                      aria-label={t('Xem mùa trước')}
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveSeasonIndex((i) => (i + 1) % seasonCards.length);
+                      }}
+                      className="h-10 w-10 rounded-full border border-gray-200 bg-white hover:border-gray-900 hover:text-gray-900 transition-colors flex items-center justify-center"
+                      aria-label={t('Xem mùa tiếp theo')}
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="-mx-4 sm:mx-0">
+                  <div className="overflow-hidden px-4 sm:px-0 touch-none select-none">
+                    <div
+                      className="flex transition-transform duration-500 ease-out"
+                      style={{ transform: `translateX(-${activeSeasonIndex * 100}%)` }}
+                    >
+                      {seasonCards.map((item, i) => (
+                        <div key={i} className="w-full shrink-0">
+                          <motion.div
+                            key={i}
+                            initial={false}
+                            animate={{ opacity: 1 }}
+                            className="w-full sm:max-w-[420px]"
+                          >
+                            <div className="bg-white border border-gray-100 overflow-hidden rounded-2xl">
+                              <div className="relative aspect-[16/10] overflow-hidden">
+                                <img
+                                  src={item.image}
+                                  alt={item.season}
+                                  className="w-full h-full object-cover"
+                                  referrerPolicy="no-referrer"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+                                <div className="absolute left-6 right-6 bottom-5">
+                                  <h4 className="text-white font-bold uppercase tracking-widest text-[11px]">{item.season}</h4>
+                                </div>
+                              </div>
+                              <div className="p-6">
+                                <p className="text-gray-500 text-sm font-light leading-relaxed">{item.desc}</p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -343,7 +450,7 @@ export default function Planning() {
                   <span className="text-red-600 font-bold tracking-[0.4em] uppercase text-[10px]">{t('Hướng dẫn chuẩn bị')}</span>
               </div>
               <h2 className="text-6xl md:text-8xl font-bold font-serif tracking-tighter text-gray-900 leading-[0.9]">
-                {t('Chuẩn bị')} <br /> <span className="text-red-600 italic">{t('chu đáo.')}</span>
+                {t('Chuẩn bị')} <br /> <span className="text-red-600 italic">{t('chu đáo')}</span>
               </h2>
             </div>
             <p className="text-gray-400 text-lg font-light max-w-sm leading-relaxed">
@@ -372,7 +479,7 @@ export default function Planning() {
                 <img 
                   src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80&w=800" 
                   alt={t('Trang phục')}
-                  className="w-full h-full object-cover grayscale"
+                  className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
               </div>
@@ -443,11 +550,9 @@ export default function Planning() {
       {/* Section 5: Volunteer Support - Atmospheric Immersive */}
       <section className="relative py-40 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1559027615-cd2671017f81?auto=format&fit=crop&q=80&w=1920" 
-            alt={t('Hỗ trợ tình nguyện viên')}
-            className="w-full h-full object-cover"
-            referrerPolicy="no-referrer"
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1559027615-cd2671017f81?auto=format&fit=crop&q=80&w=1920')" }}
           />
           <div className="absolute inset-0 bg-gray-950/70 backdrop-blur-[2px]" />
         </div>
@@ -460,8 +565,9 @@ export default function Planning() {
                   <div className="w-12 h-[1px] bg-red-600" />
                   <span className="text-red-500 font-bold tracking-[0.4em] uppercase text-[10px]">{t('Cố vấn hành trình')}</span>
                 </div>
-                <h2 className="text-6xl md:text-8xl font-bold font-serif text-white leading-[0.9] tracking-tighter">
-                  {t('Đồng hành')} <br /> <span className="text-red-600 italic">{t('tận tâm.')}</span>
+                <h2 className={`text-6xl md:text-8xl font-bold font-serif text-white tracking-tighter ${lang === 'vi' ? 'leading-[1.05]' : 'leading-[0.9]'}`}>
+                  {t('Đồng hành')}
+                  <span className={`block text-red-600 italic ${lang === 'vi' ? 'mt-6' : 'mt-3'}`}>{t('tận tâm')}</span>
                 </h2>
               </div>
               
@@ -486,7 +592,12 @@ export default function Planning() {
             </div>
 
             <div className="lg:col-span-5 relative flex justify-center">
-              <div className="relative w-80 h-80 md:w-96 md:h-96 group cursor-pointer">
+              <button
+                type="button"
+                onClick={() => navigate('/volunteers?mode=find')}
+                className="relative w-80 h-80 md:w-96 md:h-96 group cursor-pointer"
+                aria-label={t('Kết nối với tình nguyện viên')}
+              >
                 {/* Rotating Border */}
                 <div className="absolute inset-0 border border-dashed border-white/20 rounded-full animate-[spin_30s_linear_infinite]" />
                 
@@ -501,7 +612,7 @@ export default function Planning() {
 
                 {/* Decorative Orbiting Dots */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_15px_#fff]" />
-              </div>
+              </button>
               
               {/* Background Glows */}
               <div className="absolute -top-20 -right-20 w-64 h-64 bg-red-600/20 rounded-full blur-[100px]" />
@@ -517,7 +628,7 @@ export default function Planning() {
         <div className="max-w-4xl mx-auto px-4 text-center space-y-12 relative z-10">
           <h2 className="text-5xl md:text-7xl font-bold font-serif tracking-tighter text-gray-900 leading-tight">
             {t('Hành trình là')} <span className="text-red-600 italic">{t('trải nghiệm,')}</span> <br /> 
-            {t('Kế hoạch là')} <span className="text-red-600 italic">{t('khởi đầu.')}</span>
+            {t('Kế hoạch là')} <span className="text-red-600 italic">{t('khởi đầu')}</span>
           </h2>
           <p className="text-gray-400 text-xl font-light leading-relaxed">
             {t('Hãy để chúng tôi đồng hành cùng bạn trong từng bước chân khám phá mảnh đất Nghệ An đầy ân tình.')}

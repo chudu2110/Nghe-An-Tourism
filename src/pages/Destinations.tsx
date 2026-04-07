@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
-import { MapPin, Compass, Navigation, ArrowRight, Info, Anchor, Mountain, TreeDeciduous, Globe2, Landmark, Waves, Maximize2, Layers, Map as MapIcon } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react';
+import { MapPin, Compass, Navigation, ArrowRight, Info, Anchor, Mountain, TreeDeciduous, Globe2, Landmark, Waves, Maximize2, Layers, Map as MapIcon, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n';
 
@@ -47,7 +47,8 @@ const keyDestinations = [
     desc: 'Đô thị loại I, trái tim của Xứ Nghệ với nhịp sống hiện đại và bề dày lịch sử cách mạng.',
     stats: '205 km²',
     image: destinationImage('Thành Vinh.webp'),
-    coords: '18.67° N, 105.68° E'
+    coords: '18.67° N, 105.68° E',
+    link: 'https://vinpearl.com/vi/du-lich-vinh-kinh-nghiem-du-hi-thu-phu-nghe-an-thu-vi-nhat'
   },
   {
     name: 'Thị xã Cửa Lò',
@@ -55,7 +56,8 @@ const keyDestinations = [
     desc: 'Một trong những bãi biển đẹp nhất miền Trung với hạ tầng du lịch đồng bộ và hiện đại.',
     stats: '10km bờ biển',
     image: destinationImage('Thị xã cửa lò.jpg'),
-    coords: '18.82° N, 105.71° E'
+    coords: '18.82° N, 105.71° E',
+    link: 'https://vinwonders.com/vi/wonderpedia/news/du-lich-cua-lo-nghe-an/'
   },
   {
     name: 'Huyện Nam Đàn',
@@ -63,7 +65,8 @@ const keyDestinations = [
     desc: 'Quê hương của Chủ tịch Hồ Chí Minh và nhiều vĩ nhân, trung tâm du lịch văn hóa tâm linh.',
     stats: 'Di tích quốc gia',
     image: destinationImage('Nam Đàn.webp'),
-    coords: '18.70° N, 105.50° E'
+    coords: '18.70° N, 105.50° E',
+    link: 'https://vinpearl.com/vi/du-lich-nam-dan-nghe-an-ghe-tham-vung-dat-cua-lich-su-hao-hung'
   }
 ];
 
@@ -74,11 +77,68 @@ const administrativeDivisions = [
 ];
 
 export default function Destinations() {
+  const [selectedDivision, setSelectedDivision] = useState<string | null>(null);
+  const [divisionModal, setDivisionModal] = useState<{ division: string; url: string } | null>(null);
   const { scrollYProgress } = useScroll();
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
   const y2 = useTransform(scrollYProgress, [0, 1], [0, 200]);
   const { t, lang } = useI18n();
   const navigate = useNavigate();
+  const destinationImages = (import.meta as any).glob('../../Destination img/*', {
+    eager: true,
+    import: 'default',
+  }) as Record<string, string>;
+  const normalize = (s: string) =>
+    s
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+  const aliases: Record<string, string[]> = {
+    'TP Vinh': ['Vinh', 'Thanh Vinh', 'Thanh pho Vinh'],
+    'TX Cửa Lò': ['Cua Lo', 'Thi xa Cua Lo'],
+  };
+  const getDivisionImageUrl = (division: string): string | null => {
+    const candidates = [division, ...(aliases[division] ?? [])].map(normalize);
+    for (const [path, url] of Object.entries(destinationImages)) {
+      const file = path.split('/').pop() || path;
+      const base = file.replace(/\.[^.]+$/, '');
+      const normBase = normalize(base);
+      if (candidates.some((c) => normBase.includes(c) || c.includes(normBase))) {
+        return url;
+      }
+    }
+    return null;
+  };
+  const findNextWithImage = (current: string, dir: 1 | -1): { division: string; url: string } | null => {
+    const total = administrativeDivisions.length;
+    let idx = administrativeDivisions.indexOf(current);
+    for (let step = 1; step <= total; step++) {
+      idx = (idx + dir + total) % total;
+      const name = administrativeDivisions[idx];
+      const url = getDivisionImageUrl(name);
+      if (url) return { division: name, url };
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    if (!divisionModal) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setDivisionModal(null);
+      if (e.key === 'ArrowLeft' && divisionModal) {
+        const prev = findNextWithImage(divisionModal.division, -1);
+        if (prev) setDivisionModal(prev);
+      }
+      if (e.key === 'ArrowRight' && divisionModal) {
+        const next = findNextWithImage(divisionModal.division, 1);
+        if (next) setDivisionModal(next);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [divisionModal]);
 
   return (
     <div className="bg-[#0a0a0a] text-white selection:bg-red-600 selection:text-white overflow-hidden">
@@ -117,23 +177,12 @@ export default function Destinations() {
                 initial={{ opacity: 0, y: 100 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[15vw] md:text-[12vw] font-bold font-serif leading-[0.8] tracking-tighter uppercase mix-blend-difference"
+                className={`text-[13vw] md:text-[10vw] font-bold font-serif ${lang === 'vi' ? 'leading-[1.2]' : 'leading-[1.0]'} tracking-tighter uppercase mix-blend-difference`}
               >
                 {t('Điểm')}
                 {lang === 'vi' ? ' ' : ''}
-                <span className="text-red-600 italic">{t('đến.')}</span>
+                <span className="text-red-600 italic">{t('đến')}</span>
               </motion.h1>
-              
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.8, duration: 1 }}
-                className="absolute -top-10 right-0 md:right-20 w-32 h-32 md:w-48 md:h-48 border border-white/10 rounded-full flex items-center justify-center animate-spin-slow"
-              >
-                <div className="text-[10px] font-mono tracking-widest uppercase text-white/40 text-center">
-                  Nghệ An <br /> 16,490 km² <br /> {t('Việt Nam')}
-                </div>
-              </motion.div>
             </div>
 
             <motion.div
@@ -171,7 +220,7 @@ export default function Destinations() {
             <div className="max-w-2xl">
               <span className="text-red-600 font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">{t('Sinh thái vùng')}</span>
               <h2 className="text-6xl md:text-8xl font-bold font-serif tracking-tighter leading-none">
-                {t('Ba vùng')} <br /> <span className="text-red-600 italic">{t('sinh thái.')}</span>
+                {t('Ba vùng')} <br /> <span className="text-red-600 italic">{t('sinh thái')}</span>
               </h2>
             </div>
             <div className="md:text-right max-w-xs">
@@ -198,7 +247,7 @@ export default function Destinations() {
                   <motion.div 
                     whileHover={{ scale: 0.98 }}
                     transition={{ duration: 0.7 }}
-                    className="aspect-[16/10] overflow-hidden rounded-2xl shadow-2xl grayscale hover:grayscale-0 transition-all duration-1000"
+                    className="aspect-[16/10] overflow-hidden rounded-2xl shadow-2xl transition-all duration-1000"
                   >
                     <img src={region.image} alt={t(region.title)} className="w-full h-full object-cover" />
                   </motion.div>
@@ -244,8 +293,12 @@ export default function Destinations() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center mb-32">
             <div>
               <span className="text-red-600 font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">{t('Trung tâm chiến lược')}</span>
-              <h2 className="text-6xl md:text-9xl font-bold font-serif tracking-tighter leading-[0.85]">
-                {t('Tâm điểm')} <br /> <span className="text-red-600 italic">{t('chiến lược.')}</span>
+              <h2
+                className={`font-bold font-serif tracking-tighter ${
+                  lang === 'vi' ? 'text-6xl md:text-9xl leading-[1.12]' : 'text-6xl md:text-9xl leading-[0.85]'
+                }`}
+              >
+                {t('Tâm điểm')} <br /> <span className="text-red-600 italic">{t('chiến lược')}</span>
               </h2>
             </div>
             <div className="max-w-md">
@@ -268,7 +321,7 @@ export default function Destinations() {
                 <img 
                   src={dest.image} 
                   alt={t(dest.name)} 
-                  className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 grayscale group-hover:grayscale-0" 
+                  className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                 
@@ -280,7 +333,16 @@ export default function Destinations() {
                   <div className="space-y-6">
                     <div className="space-y-2">
                       <p className="text-red-600 font-mono text-[10px] font-bold tracking-[0.4em] uppercase">{t(dest.role)}</p>
-                      <h3 className="text-4xl font-bold font-serif">{t(dest.name)}</h3>
+                      <h3 className="text-4xl font-bold font-serif">
+                        <a
+                          href={dest.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:underline"
+                        >
+                          {t(dest.name)}
+                        </a>
+                      </h3>
                     </div>
                     <p className="text-white/60 text-sm leading-relaxed font-light opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100">
                       {t(dest.desc)}
@@ -292,7 +354,14 @@ export default function Destinations() {
                         </div>
                         <span className="text-xs font-mono text-white/40 uppercase tracking-widest">{t(dest.stats)}</span>
                       </div>
-                      <ArrowRight className="text-white/20 group-hover:text-red-600 group-hover:translate-x-2 transition-all" size={24} />
+                      <a
+                        href={dest.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group-hover:text-red-600 transition-all"
+                      >
+                        <ArrowRight className="text-white/20 group-hover:translate-x-2" size={24} />
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -320,7 +389,12 @@ export default function Destinations() {
               <motion.div 
                 key={idx}
                 whileHover={{ backgroundColor: "#dc2626", color: "#ffffff" }}
-                className="p-8 border-r border-b border-black aspect-square flex flex-col justify-between transition-colors duration-300 group cursor-crosshair"
+                className="p-8 border-r border-b border-black aspect-square flex flex-col justify-between transition-colors duration-300 group cursor-pointer"
+                onClick={() => {
+                  setSelectedDivision(name);
+                  const url = getDivisionImageUrl(name);
+                  if (url) setDivisionModal({ division: name, url });
+                }}
               >
                 <span className="text-[10px] font-mono text-gray-300 group-hover:text-white/40 transition-colors">
                   {(idx + 1).toString().padStart(2, '0')}
@@ -329,6 +403,73 @@ export default function Destinations() {
               </motion.div>
             ))}
           </div>
+
+          <AnimatePresence>
+            {divisionModal && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[999] bg-black/70 backdrop-blur-sm p-4 md:p-10 flex items-center justify-center"
+                onClick={() => setDivisionModal(null)}
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.98, y: 8 }}
+                  transition={{ duration: 0.2 }}
+                  className="relative w-full max-w-[92vw] max-h-[92vh] bg-white text-black rounded-2xl overflow-hidden shadow-2xl"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex items-center justify-between gap-4 px-5 py-4 border-b border-black/10">
+                    <div className="text-sm font-bold uppercase tracking-tighter leading-none">{t(divisionModal.division)}</div>
+                    <button
+                      type="button"
+                      onClick={() => setDivisionModal(null)}
+                      className="h-10 w-10 rounded-full border border-black/10 hover:border-black/30 hover:bg-black/5 transition-colors flex items-center justify-center"
+                      aria-label={t('Đóng')}
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+
+                  <div className="p-3 md:p-6 bg-black/5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!divisionModal) return;
+                        const prev = findNextWithImage(divisionModal.division, -1);
+                        if (prev) setDivisionModal(prev);
+                      }}
+                      className="absolute left-3 md:left-5 top-1/2 -translate-y-1/2 h-12 w-12 md:h-14 md:w-14 rounded-full bg-white text-black shadow-lg hover:bg-black hover:text-white transition-colors flex items-center justify-center"
+                      aria-label={t('Trước')}
+                    >
+                      <ChevronLeft />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!divisionModal) return;
+                        const next = findNextWithImage(divisionModal.division, 1);
+                        if (next) setDivisionModal(next);
+                      }}
+                      className="absolute right-3 md:right-5 top-1/2 -translate-y-1/2 h-12 w-12 md:h-14 md:w-14 rounded-full bg-white text-black shadow-lg hover:bg-black hover:text-white transition-colors flex items-center justify-center"
+                      aria-label={t('Sau')}
+                    >
+                      <ChevronRight />
+                    </button>
+                    <img
+                      src={divisionModal.url}
+                      alt={t(divisionModal.division)}
+                      className="block w-auto h-auto max-w-full max-h-[78vh] object-contain mx-auto"
+                      decoding="async"
+                      loading="eager"
+                    />
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
@@ -338,7 +479,7 @@ export default function Destinations() {
           <img 
             src={destinationImage('Miền núi.jpg')} 
             alt={t('Phong cảnh huyền ảo')}
-            className="w-full h-full object-cover opacity-30 grayscale"
+            className="w-full h-full object-cover opacity-30"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
         </div>
@@ -358,7 +499,7 @@ export default function Destinations() {
             
             <h2 className="text-5xl md:text-7xl font-bold font-serif italic leading-tight">
               {t('Nghệ An không chỉ là một tỉnh,')} <br /> 
-              <span className="text-red-600">{t('đó là một bản đồ di sản.')}</span>
+              <span className="text-red-600">{t('đó là một bản đồ di sản')}</span>
             </h2>
 
             <motion.button

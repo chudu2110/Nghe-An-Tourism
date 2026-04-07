@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowRight, 
@@ -16,8 +16,8 @@ import {
   ShieldCheck,
   Award
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useI18n } from '../i18n';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { stripVietnameseDiacritics, useI18n } from '../i18n';
 
 const volunteerImage = (fileName: string) =>
   new URL(`../../Volunteer img/${fileName}`, import.meta.url).href;
@@ -47,8 +47,34 @@ const featuredGuides = [
 export default function Volunteers() {
   const [viewMode, setViewMode] = useState<'join' | 'find'>('join');
   const [searchTerm, setSearchTerm] = useState('');
-  const { t } = useI18n();
+  const location = useLocation();
+  const { t, lang } = useI18n();
   const navigate = useNavigate();
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [expertise, setExpertise] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const mode = new URLSearchParams(location.search).get('mode');
+    if (mode === 'find') setViewMode('find');
+    if (mode === 'join') setViewMode('join');
+  }, [location.search]);
+
+  const onApplySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(false);
+    const nameOk = fullName.trim().length >= 2;
+    const emailOk = /\S+@\S+\.\S+/.test(email.trim());
+    const expertiseOk = !!expertise;
+    if (!nameOk || !emailOk || !expertiseOk) {
+      setError(t('Vui lòng điền đầy đủ thông tin theo yêu cầu.'));
+      return;
+    }
+    setError(null);
+    setSubmitted(true);
+  };
 
   return (
     <div className="bg-[#0a0a0a] text-white min-h-screen font-sans selection:bg-red-600 selection:text-white">
@@ -66,8 +92,8 @@ export default function Volunteers() {
                 {t('01. Tuyển dụng')}
               </span>
             </div>
-            <h1 className="text-6xl md:text-[10vw] font-bold font-serif leading-[0.75] tracking-tighter uppercase">
-              {t('Gia nhập')} <br /> <span className={viewMode === 'join' ? 'text-black italic' : 'text-red-600 italic'}>{t('Sứ giả.')}</span>
+            <h1 className={`text-[clamp(2.1rem,5.5vw,7rem)] font-bold font-serif ${lang === 'vi' ? 'leading-[1.2]' : 'leading-[1.0]'} tracking-tighter uppercase`}>
+              {t('Gia nhập')} <br /> <span className={viewMode === 'join' ? 'text-black italic' : 'text-red-600 italic'}>{t('Sứ giả')}</span>
             </h1>
             <p className={`max-w-md text-xl font-light leading-relaxed ${viewMode === 'join' ? 'text-white/90' : 'text-gray-400'}`}>
               {t('Trở thành cầu nối văn hóa giữa Xứ Nghệ và thế giới. Chúng tôi đang tìm kiếm những trái tim nhiệt huyết.')}
@@ -76,8 +102,6 @@ export default function Volunteers() {
               <UserPlus size={40} strokeWidth={1} />
             </div>
           </div>
-          {/* Background Text Rail */}
-          <div className="absolute -bottom-10 -left-10 text-[25vw] font-black opacity-[0.03] select-none pointer-events-none leading-none tracking-tighter">{t('THAM GIA')}</div>
         </div>
 
         {/* Right: Find Path */}
@@ -91,8 +115,8 @@ export default function Volunteers() {
                 {t('02. Kết nối')}
               </span>
             </div>
-            <h1 className="text-6xl md:text-[10vw] font-bold font-serif leading-[0.75] tracking-tighter uppercase">
-              {t('Kết nối')} <br /> <span className="text-red-600 italic">{t('Cộng đồng.')}</span>
+            <h1 className={`text-[clamp(2.1rem,5.5vw,7rem)] font-bold font-serif ${lang === 'vi' ? 'leading-[1.2]' : 'leading-[1.0]'} tracking-tighter uppercase`}>
+              {t('Kết nối')} <br /> <span className="text-red-600 italic">{t('Cộng đồng')}</span>
             </h1>
             <p className={`max-w-md text-xl font-light leading-relaxed ${viewMode === 'find' ? 'text-black/70' : 'text-gray-400'}`}>
               {t('Tìm kiếm sự hỗ trợ từ những người am hiểu địa phương nhất. Hoàn toàn miễn phí và tận tâm.')}
@@ -101,8 +125,6 @@ export default function Volunteers() {
               <Search size={40} strokeWidth={1} />
             </div>
           </div>
-          {/* Background Text Rail */}
-          <div className="absolute -bottom-10 -right-10 text-[25vw] font-black opacity-[0.03] select-none pointer-events-none leading-none tracking-tighter">{t('TÌM KIẾM')}</div>
         </div>
       </section>
 
@@ -123,7 +145,7 @@ export default function Volunteers() {
                 <div className="lg:col-span-7 space-y-20">
                   <div className="space-y-6">
                     <span className="text-red-600 font-bold tracking-[0.4em] uppercase text-[10px] block">{t('Cơ hội tham gia')}</span>
-                    <h2 className="text-5xl md:text-7xl font-bold font-serif tracking-tighter leading-none uppercase">{t('Vị trí')} <br /> {t('đang tuyển.')}</h2>
+                    <h2 className="text-5xl md:text-7xl font-bold font-serif tracking-tighter leading-none uppercase">{t('Vị trí')} <br /> {t('đang tuyển')}</h2>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-black">
@@ -179,26 +201,61 @@ export default function Volunteers() {
                   <div className="sticky top-32 bg-gray-950 text-white p-12 md:p-16 rounded-[3rem] shadow-2xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 rounded-full blur-3xl" />
                     <h3 className="text-3xl font-bold font-serif mb-12 italic">{t('Đăng ký ứng tuyển')}</h3>
-                    <form className="space-y-10">
+                    <form className="space-y-10" onSubmit={onApplySubmit}>
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{t('Họ và tên')}</label>
-                        <input type="text" className="w-full bg-transparent border-b border-white/20 py-4 text-xl font-serif focus:border-red-600 outline-none transition-colors" placeholder={t('NGUYEN VAN A')} />
+                        <input
+                          type="text"
+                          className="w-full bg-transparent border-b border-white/20 py-4 text-xl font-serif focus:border-red-600 outline-none transition-colors"
+                          placeholder={t('NGUYEN VAN A')}
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                        />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{t('Email liên hệ')}</label>
-                        <input type="email" className="w-full bg-transparent border-b border-white/20 py-4 text-xl font-serif focus:border-red-600 outline-none transition-colors" placeholder={t('HELLO@EMAIL.COM')} />
+                        <input
+                          type="email"
+                          className="w-full bg-transparent border-b border-white/20 py-4 text-xl font-serif focus:border-red-600 outline-none transition-colors"
+                          placeholder={t('HELLO@EMAIL.COM')}
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{t('Lĩnh vực am hiểu')}</label>
-                        <select className="w-full bg-transparent border-b border-white/20 py-4 text-lg font-serif focus:border-red-600 outline-none transition-colors appearance-none cursor-pointer">
-                          <option className="bg-gray-900">{t('VĂN HÓA & LỊCH SỬ')}</option>
-                          <option className="bg-gray-900">{t('ẨM THỰC XỨ NGHỆ')}</option>
-                          <option className="bg-gray-900">{t('THIÊN NHIÊN & TREKKING')}</option>
+                        <select
+                          className="w-full bg-transparent border-b border-white/20 py-4 text-lg font-serif focus:border-red-600 outline-none transition-colors appearance-none cursor-pointer"
+                          value={expertise}
+                          onChange={(e) => setExpertise(e.target.value)}
+                        >
+                          <option value="" className="bg-gray-900" disabled>
+                            {t('Chọn lĩnh vực')}
+                          </option>
+                          <option value="culture" className="bg-gray-900">
+                            {t('VĂN HÓA & LỊCH SỬ')}
+                          </option>
+                          <option value="cuisine" className="bg-gray-900">
+                            {t('ẨM THỰC XỨ NGHỆ')}
+                          </option>
+                          <option value="nature" className="bg-gray-900">
+                            {t('THIÊN NHIÊN & TREKKING')}
+                          </option>
                         </select>
                       </div>
-                      <button className="w-full py-8 bg-red-600 text-white font-bold uppercase tracking-[0.4em] text-[10px] hover:bg-white hover:text-black transition-all duration-500 shadow-xl shadow-red-600/20">
+                      <button
+                        type="submit"
+                        className="w-full py-8 bg-red-600 text-white font-bold uppercase tracking-[0.4em] text-[10px] hover:bg-white hover:text-black transition-all duration-500 shadow-xl shadow-red-600/20"
+                      >
                         {t('Gửi hồ sơ ngay')}
                       </button>
+                      {(submitted || error) && (
+                        <div className="text-gray-400 text-sm font-light leading-relaxed">
+                          {submitted
+                            ? t('Đăng ký thành công, hãy thường xuyên kiểm tra mail của bạn để nhận thông tin sớm nhất từ chúng tôi!')
+                            : t('Vui lòng điền đầy đủ thông tin theo yêu cầu.')}
+                        </div>
+                      )}
                     </form>
                   </div>
                 </div>
@@ -218,7 +275,7 @@ export default function Volunteers() {
               <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-20">
                 <div className="space-y-6">
                   <span className="text-red-500 font-bold tracking-[0.4em] uppercase text-[10px] block">{t('Mạng lưới kết nối')}</span>
-                  <h2 className="text-5xl md:text-7xl font-bold font-serif tracking-tighter leading-none uppercase">{t('Danh bạ ')}<br /> <span className="text-red-600 italic">{t('Sứ giả.')}</span></h2>
+                    <h2 className="text-5xl md:text-7xl font-bold font-serif tracking-tighter leading-none uppercase">{t('Danh bạ ')}<br /> <span className="text-red-600 italic">{t('Sứ giả')}</span></h2>
                 </div>
                 
                 {/* Search & Filter Bar */}
@@ -255,8 +312,14 @@ export default function Volunteers() {
                   </thead>
                   <tbody>
                     {volunteerDirectory.filter(v => 
-                      v.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                      v.area.toLowerCase().includes(searchTerm.toLowerCase())
+                      (() => {
+                        const q = stripVietnameseDiacritics(searchTerm.trim()).toLowerCase();
+                        if (!q) return true;
+                        const name = stripVietnameseDiacritics(v.name).toLowerCase();
+                        const area = stripVietnameseDiacritics(v.area).toLowerCase();
+                        const lang = stripVietnameseDiacritics(v.lang).toLowerCase();
+                        return name.includes(q) || area.includes(q) || lang.includes(q);
+                      })()
                     ).map((v) => (
                       <tr key={v.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
                         <td className="p-8 font-mono text-xs text-gray-600">{v.id}</td>
@@ -333,7 +396,7 @@ export default function Volunteers() {
                 <div className="flex flex-col md:flex-row justify-between items-end gap-8">
                   <div className="space-y-4">
                     <span className="text-red-500 font-bold tracking-[0.4em] uppercase text-[10px] block">{t('Dành cho khách du lịch')}</span>
-                    <h2 className="text-4xl md:text-6xl font-bold font-serif tracking-tighter leading-none uppercase">{t('Sứ giả')} <br /> <span className="text-red-600 italic">{t('Tiêu biểu.')}</span></h2>
+                    <h2 className="text-4xl md:text-6xl font-bold font-serif tracking-tighter leading-none uppercase">{t('Sứ giả')} <br /> <span className="text-red-600 italic">{t('Tiêu biểu')}</span></h2>
                   </div>
                   <p className="max-w-md text-gray-500 text-sm leading-relaxed">
                     {t('Những tình nguyện viên có kinh nghiệm dẫn đoàn phong phú và nhận được nhiều phản hồi tích cực nhất từ du khách.')}
@@ -347,14 +410,14 @@ export default function Volunteers() {
                         <img 
                           src={guide.img} 
                           alt={guide.name} 
-                          className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+                          className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
                         />
                       </div>
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
                       <div className="absolute bottom-0 left-0 right-0 p-8 space-y-4">
                         <div className="flex justify-between items-end">
                           <div className="space-y-1">
-                            <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">{guide.area}</span>
+                            <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">{t(guide.area)}</span>
                             <h4 className="text-2xl font-bold font-serif text-white">{guide.name}</h4>
                           </div>
                           <div className="text-right">
@@ -428,7 +491,7 @@ export default function Volunteers() {
         <div className="max-w-4xl mx-auto px-4 text-center space-y-16">
           <ShieldCheck className="text-red-600 mx-auto" size={100} strokeWidth={1} />
           <div className="space-y-8">
-            <h2 className="text-5xl md:text-7xl font-bold font-serif tracking-tighter leading-none uppercase italic">{t('Cam kết')} <br /> <span className="text-red-600 not-italic">{t('Tin cậy.')}</span></h2>
+            <h2 className="text-5xl md:text-7xl font-bold font-serif tracking-tighter leading-none uppercase italic">{t('Cam kết')} <br /> <span className="text-red-600 not-italic">{t('Tin cậy')}</span></h2>
             <p className="text-gray-500 text-2xl font-light leading-relaxed italic">
               {t('"Tất cả tình nguyện viên đều được xác minh danh tính và đào tạo kỹ lưỡng. Chúng tôi cam kết mang lại trải nghiệm văn minh, an toàn và đậm chất bản địa cho mọi du khách khi đến với Nghệ An."')}
             </p>

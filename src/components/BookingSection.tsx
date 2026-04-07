@@ -62,6 +62,15 @@ const featuredOffers: FeaturedOffer[] = [
     kind: 'flight'
   },
   {
+    id: 'featured-flight-2',
+    title: 'Vietjet Air đến Vinh',
+    subtitle: 'Bay cùng Vietjet',
+    image: homeBodyImage('Flight.jpg'),
+    description: 'Bay tiết kiệm, linh hoạt lịch trình và săn ưu đãi để đến Nghệ An thật dễ dàng.',
+    linkText: 'Đặt vé ngay',
+    kind: 'flight'
+  },
+  {
     id: 'featured-newsletter-1',
     title: 'Bản tin du lịch',
     subtitle: 'Nhận ưu đãi đặc biệt.',
@@ -139,7 +148,7 @@ export default function BookingSection() {
         {/* Content Grid - 3 Column Layout like the image */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
           {/* Left Column - Empty or for spacing as in the image */}
-          <div className="hidden md:block">
+          <div className={activeCategory === 'flights' ? 'hidden' : 'hidden md:block'}>
             {/* This space can be used for a vertical title or left empty for the "Swiss" look */}
           </div>
 
@@ -157,7 +166,7 @@ export default function BookingSection() {
               <div className="aspect-[16/10] overflow-hidden rounded-sm mb-8">
                 <img
                   src={offer.image}
-                  alt={offer.title}
+                  alt={t(offer.title)}
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   referrerPolicy="no-referrer"
                 />

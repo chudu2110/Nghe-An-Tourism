@@ -204,15 +204,6 @@ export default function LuckyWheel() {
                 </h1>
               </motion.div>
 
-              <motion.p
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-gray-500 text-lg leading-relaxed font-light max-w-xl"
-              >
-                {t('Quay một lần để nhận voucher giảm giá từ 10% đến Chuyến đi miễn phí. Tỉ lệ “Chúc bạn may mắn lần sau” là cao nhất.')}
-              </motion.p>
-
               <div className="grid grid-cols-2 gap-4 max-w-xl">
                 {[
                   { icon: <Ticket size={20} />, title: t('Voucher'), desc: t('Giảm 10%–50% cho dịch vụ.') },

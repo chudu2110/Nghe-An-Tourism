@@ -2,9 +2,18 @@ import { GoogleGenAI, Modality } from "@google/genai";
 
 let ai: GoogleGenAI | null = null;
 
+function readGeminiApiKey(): string {
+  const env = (import.meta as unknown as { env?: Record<string, string | undefined> }).env;
+  const fromVite = (env?.VITE_GEMINI_API_KEY as string | undefined) ?? "";
+  if (fromVite.trim()) return fromVite;
+
+  const maybeProcess = typeof process !== "undefined" ? (process as unknown as { env?: Record<string, string | undefined> }) : null;
+  const fromProcess = (maybeProcess?.env?.GEMINI_API_KEY as string | undefined) ?? "";
+  return fromProcess;
+}
+
 function getAi(): GoogleGenAI | null {
-  const apiKey = (process.env.GEMINI_API_KEY as string | undefined) ?? "";
-  const trimmed = apiKey.trim();
+  const trimmed = readGeminiApiKey().trim();
   if (!trimmed) return null;
   if (!ai) ai = new GoogleGenAI({ apiKey: trimmed });
   return ai;

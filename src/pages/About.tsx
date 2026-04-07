@@ -1,153 +1,310 @@
 import React from 'react';
-import Section from '../components/Section';
-import { Mail, Phone, MapPin, Facebook, Instagram, Twitter, Youtube, ArrowRight, Sparkles } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, useScroll, useTransform } from 'motion/react';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { useI18n } from '../i18n';
 
+const aboutImage = (fileName: string) =>
+  new URL(`../../About img/${fileName}`, import.meta.url).href;
+
 export default function About() {
-  const { t } = useI18n();
+  const { scrollYProgress } = useScroll();
+  const { t, lang } = useI18n();
+  
+  // Parallax and scroll transforms
+  const heroTextY = useTransform(scrollYProgress, [0, 0.2], [0, -50]);
+  const heroImageScale = useTransform(scrollYProgress, [0, 0.2], [1, 1.05]);
+  const heroImageY = useTransform(scrollYProgress, [0, 0.25], [0, 60]);
+
+  const sections = [
+    {
+      id: '01',
+      title: 'Điểm Đến',
+      path: '/destinations',
+      desc: 'Hành trình từ đỉnh Puxailaileng hùng vĩ đến dải cát trắng mịn Cửa Lò.',
+      img: aboutImage('Điểm đến.webp')
+    },
+    {
+      id: '02',
+      title: 'Trải Nghiệm',
+      path: '/experiences',
+      desc: 'Săn mây đại ngàn, chèo thuyền trên sông Lam và văn hóa bản địa.',
+      img: aboutImage('Trải nghiệm.webp')
+    },
+    {
+      id: '03',
+      title: 'Ẩm thực & Văn hóa',
+      path: '/food-culture',
+      desc: 'Hương vị đặc sản và chiều sâu văn hóa trong từng câu chuyện Xứ Nghệ.',
+      img: aboutImage('Ẩm thực.jpg')
+    },
+    {
+      id: '04',
+      title: 'Đặt Chỗ',
+      path: '/booking',
+      desc: 'Dịch vụ đặt phòng, tour và vé tham quan nhanh chóng, an toàn.',
+      img: aboutImage('Đặt chỗ.jpg')
+    },
+    {
+      id: '05',
+      title: 'Tình Nguyện',
+      path: '/volunteers',
+      desc: 'Tham gia bảo tồn thiên nhiên và hỗ trợ phát triển cộng đồng.',
+      img: aboutImage('tình nguyện.jpg')
+    },
+    {
+      id: '06',
+      title: 'Kế Hoạch',
+      path: '/planning',
+      desc: 'Công cụ thiết kế hành trình hoàn hảo theo từng mùa và sở thích.',
+      img: aboutImage('Kế hoạch.jpg')
+    },
+    {
+      id: '07',
+      title: 'Bản Đồ',
+      path: '/map',
+      desc: 'Dẫn lối bạn đến những góc nhỏ chưa tên.',
+      img: aboutImage('Bản đồ.jpg')
+    },
+    {
+      id: '08',
+      title: 'Từ Điển',
+      path: '/dictionary',
+      desc: 'Giải mã những từ ngữ địa phương đặc trưng của người Xứ Nghệ.',
+      img: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=1200'
+    }
+  ];
+
   return (
-    <div className="pt-24 overflow-hidden">
-      {/* Hero Section - Editorial Style */}
-      <section className="relative bg-gray-900 py-32 text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_30%,rgba(153,27,27,0.4),transparent_70%)]" />
+    <div className="bg-white text-[#1a1a1a] selection:bg-red-50 selection:text-red-900 overflow-hidden font-sans">
+      
+      {/* SECTION 1: MINIMALIST EDITORIAL HERO */}
+      <section className="relative min-h-[90vh] flex items-center justify-center pt-32 pb-20 border-b border-gray-100 overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 z-0">
+          <motion.img
+            style={{ scale: heroImageScale, y: heroImageY }}
+            src={aboutImage('Header.jpg')}
+            alt={t('Phong cảnh Nghệ An')}
+            className="w-full h-full object-cover grayscale opacity-30"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/35 to-white/80" />
         </div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-4xl"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium mb-8">
-              <Sparkles size={16} className="text-red-500" />
-              <span>{t('Hành trình kết nối văn hóa')}</span>
+
+        <div className="max-w-7xl mx-auto px-8 w-full relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-end">
+            <div className="lg:col-span-8 space-y-12">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+                className="flex items-center gap-4"
+              >
+                <div className="w-12 h-[1px] bg-red-600" />
+                <span className="text-[10px] font-bold tracking-[0.4em] uppercase text-red-600">{t('Cẩm nang cổng thông tin')}</span>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{ duration: 0.8, ease: 'easeOut', delay: 0.08 }}
+              >
+                <motion.h1 
+                  style={{ y: heroTextY }}
+                  className={`text-5xl md:text-[8.5vw] font-serif italic ${lang === 'vi' ? 'leading-[1.2]' : 'leading-[1.0]'} tracking-tighter text-[#1a1a1a]`}
+                >
+                  {t('Hệ sinh thái')} <br />
+                  <span className="text-red-600">{t('Du lịch số')}</span>
+                </motion.h1>
+              </motion.div>
             </div>
-            <h1 className="text-6xl md:text-9xl font-bold mb-8 tracking-tighter leading-none">
-              {t('Về')} <span className="italic font-serif text-red-600">{t('chúng tôi')}</span>
-            </h1>
-            <p className="text-2xl text-gray-400 max-w-2xl leading-relaxed">
-              {t('Sứ mệnh của chúng tôi là mang vẻ đẹp của Nghệ An đến gần hơn với mọi người, bằng tình yêu và sự thấu hiểu sâu sắc về mảnh đất này.')}
-            </p>
+            
+            <div className="lg:col-span-4 pb-4">
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: 'easeOut', delay: 0.18 }}
+                className="text-xl text-gray-500 font-light leading-relaxed border-l border-gray-100 pl-8"
+              >
+                {t('Cổng thông tin toàn diện giúp bạn giải mã vẻ đẹp tiềm ẩn của Nghệ An thông qua những trải nghiệm thực tế và dữ liệu chính xác.')}
+              </motion.p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 2: CLEAN DIRECTORY LIST (Swiss Style) */}
+      <section className="py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div className="space-y-4">
+              <motion.h2
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-5xl font-serif italic tracking-tighter"
+              >
+                {t('Mục lục')} <span className="text-red-600">{t('Khám phá')}</span>
+              </motion.h2>
+            </div>
+            <motion.p
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.08 }}
+              className="text-gray-400 max-w-sm text-sm leading-relaxed"
+            >
+              {t('Từ cảnh sắc đến con người Xứ Nghệ, tất cả đều sẵn sàng để bạn trải nghiệm một cách trọn vẹn nhất.')}
+            </motion.p>
+          </div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: '-120px' }}
+            variants={{
+              hidden: {},
+              show: { transition: { staggerChildren: 0.06 } },
+            }}
+            className="grid grid-cols-1 gap-px bg-gray-100 border-t border-b border-gray-100"
+          >
+            {sections.map((item) => (
+              <motion.div
+                key={item.path}
+                variants={{
+                  hidden: { opacity: 0, clipPath: 'inset(0 0 100% 0)' },
+                  show: { opacity: 1, clipPath: 'inset(0 0 0% 0)', transition: { duration: 0.7, ease: 'easeOut' } },
+                }}
+              >
+                <Link 
+                  to={item.path} 
+                  className="group relative bg-white py-12 flex flex-col md:flex-row md:items-center justify-between transition-all duration-500 hover:px-8"
+                >
+                  <div className="flex items-center gap-12 z-10">
+                    <span className="text-sm font-mono text-gray-300 group-hover:text-red-600 transition-colors">{item.id}</span>
+                    <div className="space-y-2">
+                      <h3 className="text-3xl md:text-5xl font-serif italic group-hover:translate-x-4 transition-transform duration-500">{t(item.title)}</h3>
+                      <p className="text-gray-400 text-sm max-w-md group-hover:translate-x-4 transition-transform duration-500 delay-75">{t(item.desc)}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 md:mt-0 flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-red-600 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    {t('Truy cập')} <ArrowRight size={14} />
+                  </div>
+
+                  <div className="absolute right-40 top-1/2 -translate-y-1/2 w-64 h-40 rounded-2xl overflow-hidden opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all duration-700 pointer-events-none hidden lg:block">
+                    <img src={item.img} alt={t(item.title)} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </section>
 
-      {/* Story Section - Overlapping Layout */}
-      <Section className="relative">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-7 relative">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+      {/* SECTION 3: IMAGE FOCUS (Clean Grid) */}
+      <section className="py-32 bg-[#fafafa]">
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.96, rotate: -1 }}
+              whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
               viewport={{ once: true }}
-              className="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl"
+              transition={{ duration: 0.9 }}
+              className="relative aspect-[4/5] overflow-hidden rounded-3xl"
             >
-              <img
-                src="https://picsum.photos/seed/about-us/1200/800"
-                alt="Our Story"
+              <img 
+                src="https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?auto=format&fit=crop&q=80&w=1200" 
+                alt={t('Văn hóa')} 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
             </motion.div>
-            {/* Decorative elements */}
-            <div className="absolute -top-10 -left-10 w-40 h-40 bg-red-600/10 rounded-full blur-3xl" />
-            <div className="absolute -bottom-10 -right-10 w-60 h-60 bg-gray-900/5 rounded-full blur-3xl" />
-          </div>
-          
-          <div className="lg:col-span-5 lg:-ml-20 relative z-20">
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="bg-white p-12 md:p-16 rounded-[2.5rem] shadow-2xl border border-gray-100"
-            >
-              <h3 className="text-4xl font-bold text-gray-900 mb-8 leading-tight">
-                {t('Nghệ An Travel - Cổng thông tin du lịch toàn diện.')}
-              </h3>
-              <div className="space-y-6 text-gray-600 text-lg leading-relaxed">
-                <p>
-                  {t('Website này được xây dựng với mong muốn cung cấp cho du khách trong và ngoài nước những thông tin chính xác, đầy đủ và hấp dẫn nhất về du lịch Nghệ An.')}
-                </p>
-                <p>
-                  {t('Từ những điểm đến nổi tiếng đến những góc khuất hoang sơ, chúng tôi hy vọng sẽ là người bạn đồng hành tin cậy trên mỗi bước chân của bạn.')}
-                </p>
-                <p className="italic font-serif text-xl border-l-4 border-red-600 pl-6 py-2">
-                  {t('"Chúng tôi tin rằng Nghệ An có một sức hút kỳ lạ, một sự kết hợp hoàn hảo giữa thiên nhiên hùng vĩ và bề dày lịch sử văn hóa."')}
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </Section>
 
-      {/* Contact Section - Modern Grid */}
-      <section className="bg-gray-50 py-32 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-start">
             <div className="space-y-16">
-              <div>
-                <h2 className="text-sm font-bold text-red-600 uppercase tracking-[0.3em] mb-6">{t('Liên hệ')}</h2>
-                <h3 className="text-5xl font-bold text-gray-900 leading-tight">{t('Chúng tôi luôn lắng nghe bạn')}</h3>
+              <div className="space-y-6">
+                <span className="text-red-600 text-[10px] font-bold tracking-[0.4em] uppercase">{t('Giá trị cốt lõi')}</span>
+                <motion.h2
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="text-6xl font-serif italic leading-none tracking-tighter"
+                >
+                  {t('Sứ mệnh của')} <br /> <span className="text-red-600">{t('Chúng tôi')}</span>
+                </motion.h2>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+              <div className="space-y-12">
                 {[
-                  { icon: <MapPin />, title: t('Địa chỉ'), value: t('TP Vinh, Nghệ An, Việt Nam') },
-                  { icon: <Phone />, title: t('Điện thoại'), value: '+84 123 456 789' },
-                  { icon: <Mail />, title: t('Email'), value: 'info@nghean-travel.com' },
-                ].map((item, idx) => (
-                  <div key={idx} className="group p-8 bg-white rounded-3xl border border-gray-100 hover:shadow-xl transition-all">
-                    <div className="bg-red-50 text-red-600 p-4 rounded-2xl w-fit mb-6 group-hover:bg-red-600 group-hover:text-white transition-colors">
-                      {item.icon}
-                    </div>
-                    <h4 className="font-bold text-xl text-gray-900 mb-2">{item.title}</h4>
-                    <p className="text-gray-500 leading-relaxed">{item.value}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex gap-4">
-                {[Facebook, Instagram, Twitter, Youtube].map((Icon, idx) => (
-                  <a 
-                    key={idx} 
-                    href="#" 
-                    className="w-14 h-14 bg-gray-900 text-white rounded-2xl flex items-center justify-center hover:bg-red-600 hover:-translate-y-1 transition-all shadow-lg"
+                  { title: 'Dữ liệu chính xác', desc: 'Mọi thông tin đều được đội ngũ chuyên gia bản địa kiểm chứng và cập nhật thường xuyên.' },
+                  { title: 'Trải nghiệm cá nhân', desc: 'Chúng tôi tin rằng mỗi hành trình đều là duy nhất, và nền tảng này giúp bạn cá nhân hóa điều đó.' },
+                  { title: 'Kết nối cộng đồng', desc: 'Xóa nhòa khoảng cách giữa du khách và người dân địa phương thông qua các dự án tình nguyện.' }
+                ].map((val, i) => (
+                  <motion.div
+                    key={val.title}
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-80px' }}
+                    transition={{ duration: 0.5, delay: i * 0.06 }}
+                    className="space-y-4 border-l-2 border-gray-100 pl-8 hover:border-red-600 transition-colors"
                   >
-                    <Icon size={24} />
-                  </a>
+                    <h4 className="text-xl font-serif italic">{t(val.title)}</h4>
+                    <p className="text-gray-500 font-light leading-relaxed text-sm">{t(val.desc)}</p>
+                  </motion.div>
                 ))}
               </div>
-            </div>
 
-            <div className="relative">
-              <div className="absolute -inset-4 bg-red-600 rounded-[3rem] -rotate-2 opacity-10" />
-              <div className="relative bg-white p-12 shadow-2xl rounded-[2.5rem] border border-gray-100">
-                <h3 className="text-3xl font-bold mb-10 text-center">{t('Gửi tin nhắn')}</h3>
-                <form className="space-y-8">
-                  <div className="space-y-3">
-                    <label className="text-xs font-bold uppercase tracking-widest text-gray-400 ml-1">{t('Họ và tên')}</label>
-                    <input type="text" className="w-full bg-gray-50 rounded-xl px-6 py-4 outline-none focus:ring-2 ring-red-600/20 border border-transparent focus:border-red-600 transition-all" />
-                  </div>
-                  <div className="space-y-3">
-                    <label className="text-xs font-bold uppercase tracking-widest text-gray-400 ml-1">{t('Email')}</label>
-                    <input type="email" className="w-full bg-gray-50 rounded-xl px-6 py-4 outline-none focus:ring-2 ring-red-600/20 border border-transparent focus:border-red-600 transition-all" />
-                  </div>
-                  <div className="space-y-3">
-                    <label className="text-xs font-bold uppercase tracking-widest text-gray-400 ml-1">{t('Tin nhắn')}</label>
-                    <textarea rows={5} className="w-full bg-gray-50 rounded-xl px-6 py-4 outline-none focus:ring-2 ring-red-600/20 border border-transparent focus:border-red-600 transition-all resize-none" />
-                  </div>
-                  <button className="w-full bg-red-600 text-white font-bold py-5 rounded-2xl uppercase tracking-widest text-sm hover:bg-red-700 transition-all shadow-xl shadow-red-600/30 hover:-translate-y-1">
-                    {t('Gửi tin nhắn ngay')} <ArrowRight size={18} className="inline ml-2" />
-                  </button>
-                </form>
-              </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* SECTION 4: MINIMAL CTA */}
+      <section className="py-40 bg-white text-center">
+        <div className="max-w-3xl mx-auto px-8 space-y-12">
+          <motion.h2
+            initial={{ opacity: 0, y: 24, scale: 0.98, filter: 'blur(6px)' }}
+            whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, ease: 'easeOut' }}
+            className="text-7xl md:text-8xl font-serif italic tracking-tighter leading-[0.9]"
+          >
+            {t('Bắt đầu')} <br />{' '}
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.12, duration: 0.7, ease: 'easeOut' }}
+              className="text-red-600 inline-block"
+            >
+              {t('Hành trình')}
+            </motion.span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 18, filter: 'blur(4px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1, duration: 0.8, ease: 'easeOut' }}
+            className="text-xl md:text-2xl text-gray-500 font-light leading-relaxed"
+          >
+            {t('Chọn một chuyên mục từ mục lục phía trên hoặc quay lại trang chủ để bắt đầu khám phá Nghệ An theo cách của bạn.')}
+          </motion.p>
+          
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <Link 
+              to="/" 
+              className="inline-flex items-center gap-6 text-[10px] font-bold uppercase tracking-[0.4em] text-[#1a1a1a] hover:text-red-600 transition-colors group"
+            >
+              {t('Quay lại trang chủ')} 
+              <span className="w-12 h-12 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-all">
+                <ArrowRight size={14} className="group-hover:text-white transition-colors" />
+              </span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }

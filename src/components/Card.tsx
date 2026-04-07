@@ -8,6 +8,8 @@ interface CardProps {
   title: string;
   subtitle?: string;
   image: string;
+  imageWrapperClassName?: string;
+  imageClassName?: string;
   description?: string;
   link?: string;
   className?: string;
@@ -19,6 +21,8 @@ export default function Card({
   title, 
   subtitle, 
   image, 
+  imageWrapperClassName,
+  imageClassName,
   description, 
   link, 
   className = '', 
@@ -53,11 +57,11 @@ export default function Card({
         onClick={handleClick}
         className={`group relative overflow-hidden rounded-sm cursor-pointer ${className}`}
       >
-        <div className={`${aspectClasses[aspectRatio]} overflow-hidden`}>
+        <div className={`${aspectClasses[aspectRatio]} overflow-hidden ${imageWrapperClassName ?? ''}`}>
           <img
             src={image}
             alt={title}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            className={`h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 ${imageClassName ?? ''}`}
             referrerPolicy="no-referrer"
           />
         </div>
@@ -86,11 +90,11 @@ export default function Card({
       onClick={handleClick}
       className={`group relative overflow-hidden rounded-sm bg-white shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer ${className}`}
     >
-      <div className={`${aspectClasses[aspectRatio]} overflow-hidden`}>
+      <div className={`${aspectClasses[aspectRatio]} overflow-hidden ${imageWrapperClassName ?? ''}`}>
         <img
           src={image}
           alt={title}
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className={`h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 ${imageClassName ?? ''}`}
           referrerPolicy="no-referrer"
         />
       </div>

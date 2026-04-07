@@ -1,10 +1,10 @@
-import React, { Component, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Component, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Camera, ChevronRight, Globe, Layers, MapPin, Maximize2, Minimize2, Plus, Route, Search, Sparkles, Star, Utensils, X } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useLocation } from 'react-router-dom';
-import { useI18n } from '../i18n';
+import { stripVietnameseDiacritics, useI18n } from '../i18n';
 
 type Category = 'all' | 'nature' | 'culture' | 'food';
 
@@ -115,30 +115,60 @@ export default function MapPage() {
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedId, setSelectedId] = useState<string>(initialPlaces[0]?.id ?? '1');
-  const [tileMode, setTileMode] = useState<keyof typeof tiles>('dark');
+  const [tileMode, setTileMode] = useState<keyof typeof tiles>('light');
   const [routeIds, setRouteIds] = useState<string[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMapMoving, setIsMapMoving] = useState(false);
   const mapElRef = useRef<HTMLDivElement | null>(null);
   const mapWrapperRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const routeLineRef = useRef<L.Polyline | null>(null);
+  const moveTokenRef = useRef(0);
+
+  const beginMapTransition = useCallback(() => {
+    if (!mapRef.current) return;
+    moveTokenRef.current += 1;
+    const token = moveTokenRef.current;
+    setIsMapMoving(true);
+    markersRef.current.forEach((m) => m.closeTooltip());
+    window.setTimeout(() => {
+      if (moveTokenRef.current === token) setIsMapMoving(false);
+    }, 2000);
+  }, []);
+
+  const selectPlace = useCallback(
+    (id: string) => {
+      if (id === selectedId) return;
+      beginMapTransition();
+      setSelectedId(id);
+    },
+    [beginMapTransition, selectedId],
+  );
 
   useEffect(() => {
     const q = new URLSearchParams(location.search).get('q');
     const next = q?.trim();
     if (!next) return;
     setSearchTerm(next);
-    const match = initialPlaces.find((p) => p.name.toLowerCase().includes(next.toLowerCase()));
-    if (match) setSelectedId(match.id);
-  }, [location.search]);
+    const qNorm = stripVietnameseDiacritics(next).toLowerCase();
+    const match = initialPlaces.find((p) => stripVietnameseDiacritics(p.name).toLowerCase().includes(qNorm));
+    if (match) {
+      if (mapRef.current) beginMapTransition();
+      setSelectedId(match.id);
+    }
+  }, [beginMapTransition, location.search]);
 
   const filteredPlaces = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
     return initialPlaces.filter((p) => {
       const matchesCategory = activeCategory === 'all' || p.category === activeCategory;
-      const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q);
+      const qNorm = stripVietnameseDiacritics(q).toLowerCase();
+      const matchesSearch =
+        !qNorm ||
+        stripVietnameseDiacritics(p.name).toLowerCase().includes(qNorm) ||
+        stripVietnameseDiacritics(p.desc).toLowerCase().includes(qNorm);
       return matchesCategory && matchesSearch;
     });
   }, [activeCategory, searchTerm]);
@@ -192,6 +222,26 @@ export default function MapPage() {
 
     mapRef.current = map;
 
+    const closeAllTooltips = () => {
+      markersRef.current.forEach((m) => m.closeTooltip());
+    };
+    const startMove = () => {
+      moveTokenRef.current += 1;
+      setIsMapMoving(true);
+      closeAllTooltips();
+    };
+    const finishMove = () => {
+      const token = moveTokenRef.current;
+      window.setTimeout(() => {
+        if (moveTokenRef.current === token) setIsMapMoving(false);
+      }, 140);
+    };
+
+    map.on('movestart', startMove);
+    map.on('zoomstart', startMove);
+    map.on('moveend', finishMove);
+    map.on('zoomend', finishMove);
+
     const layer = L.tileLayer(tiles[tileMode].url, {
       attribution: tiles[tileMode].attribution,
       maxZoom: 18,
@@ -203,6 +253,10 @@ export default function MapPage() {
     }, 0);
 
     return () => {
+      map.off('movestart', startMove);
+      map.off('zoomstart', startMove);
+      map.off('moveend', finishMove);
+      map.off('zoomend', finishMove);
       routeLineRef.current?.remove();
       routeLineRef.current = null;
       markersRef.current.forEach((m) => m.remove());
@@ -241,12 +295,15 @@ export default function MapPage() {
       if (markersRef.current.has(place.id)) return;
       const icon = buildMarkerIcon({ color: markerColor(place.category), selected: place.id === selectedId });
       const marker = L.marker([place.lat, place.lng], { icon });
-      marker.on('click', () => setSelectedId(place.id));
-      marker.bindTooltip(t(place.name), { direction: 'top', opacity: 0.9, offset: [0, -12], sticky: true });
+      marker.on('click', () => {
+        marker.closeTooltip();
+        selectPlace(place.id);
+      });
+      marker.bindTooltip(t(place.name), { direction: 'top', opacity: 0.9, offset: [0, -12], sticky: false });
       marker.addTo(map);
       markersRef.current.set(place.id, marker);
     });
-  }, [filteredPlaces, selectedId, t]);
+  }, [filteredPlaces, selectedId, selectPlace, t]);
 
   useEffect(() => {
     markersRef.current.forEach((marker, id) => {
@@ -286,6 +343,7 @@ export default function MapPage() {
 
   const clearRoute = () => setRouteIds([]);
   const resetView = () => {
+    beginMapTransition();
     mapRef.current?.flyTo([CENTER.lat, CENTER.lng], 11, { duration: 1.1 });
   };
   const toggleFullscreen = async () => {
@@ -303,17 +361,17 @@ export default function MapPage() {
   };
 
   const mapFallback = (
-    <div className="absolute inset-0 flex items-center justify-center bg-[#070707]">
-      <div className="max-w-lg w-full mx-6 p-10 rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur-xl text-white">
+    <div className="absolute inset-0 flex items-center justify-center bg-white">
+      <div className="max-w-lg w-full mx-6 p-10 rounded-[2rem] border border-gray-200 bg-white text-gray-900 shadow-xl">
         <div className="flex items-center justify-between mb-6">
-          <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/60">{t('Trạng thái bản đồ')}</span>
-          <span className="inline-flex items-center space-x-2 text-[10px] font-bold uppercase tracking-widest text-white/80">
+          <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-500">{t('Trạng thái bản đồ')}</span>
+          <span className="inline-flex items-center space-x-2 text-[10px] font-bold uppercase tracking-widest text-gray-700">
             <span className="w-2 h-2 rounded-full bg-amber-400" />
             <span>{t('Dự phòng')}</span>
           </span>
         </div>
         <h3 className="text-3xl font-bold font-serif tracking-tight">{t('Không tải được bản đồ')}</h3>
-        <p className="mt-3 text-white/60 text-sm leading-relaxed">
+        <p className="mt-3 text-gray-600 text-sm leading-relaxed">
           {t('Trang vẫn hoạt động bình thường với danh sách điểm đến và tính năng tạo lộ trình. Bản đồ nền sẽ được phục hồi khi kết nối ổn định.')}
         </p>
         <button
@@ -327,7 +385,7 @@ export default function MapPage() {
   );
 
   return (
-    <div className="pt-20 bg-[#050505] min-h-screen">
+    <div className="pt-20 bg-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         <div className="flex items-end justify-between gap-6">
           <div className="space-y-3">
@@ -335,19 +393,19 @@ export default function MapPage() {
               <div className="h-px w-12 bg-red-600" />
               <span className="text-red-500 font-mono text-[10px] font-bold tracking-[0.5em] uppercase">{t('Nghệ An Live')}</span>
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold font-serif tracking-tighter leading-[0.9] text-white">
-              {t('Bản đồ')} <span className="text-red-600 italic">{t('trải nghiệm.')}</span>
+            <h1 className="text-5xl md:text-6xl font-bold font-serif tracking-tighter leading-[0.9] text-gray-900">
+              {t('Bản đồ')} <span className="text-red-600 italic">{t('trải nghiệm')}</span>
             </h1>
-            <p className="text-white/55 text-sm max-w-2xl font-light leading-relaxed">
+            <p className="text-gray-600 text-sm max-w-2xl font-light leading-relaxed">
               {t('Chọn điểm đến, thêm vào lộ trình và xem đường nối trực tiếp trên bản đồ. Nút toàn màn hình ở góc phải của bản đồ.')}
             </p>
           </div>
 
           <div className="hidden md:flex items-center space-x-3">
-            <div className="px-4 py-3 rounded-full border border-white/10 bg-white/5 text-white/70 text-[11px] font-bold">
+            <div className="px-4 py-3 rounded-full border border-gray-200 bg-gray-50 text-gray-700 text-[11px] font-bold">
               {filteredPlaces.length}/{initialPlaces.length} {t('điểm')}
             </div>
-            <div className="px-4 py-3 rounded-full border border-white/10 bg-white/5 text-white/70 text-[11px] font-mono">
+            <div className="px-4 py-3 rounded-full border border-gray-200 bg-gray-50 text-gray-700 text-[11px] font-mono">
               {routeKm.toFixed(1)} km
             </div>
           </div>
@@ -355,7 +413,7 @@ export default function MapPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-5 space-y-6">
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl">
+            <div className="relative overflow-hidden rounded-[2rem] border border-gray-200 bg-white shadow-xl">
               <div className="absolute top-0 left-0 w-full h-1 bg-red-600 overflow-hidden">
                 <motion.div
                   animate={{ x: [-220, 420] }}
@@ -366,11 +424,11 @@ export default function MapPage() {
 
               <div className="p-8 space-y-6">
                 <div className="relative group">
-                  <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-red-500 transition-colors" size={16} />
+                  <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors" size={16} />
                   <input
                     type="text"
                     placeholder={t('Tìm điểm đến, món ăn, di tích...')}
-                    className="w-full bg-black/30 border border-white/10 py-4 pl-12 pr-4 rounded-full outline-none focus:border-red-600 transition-all text-sm text-white placeholder:text-white/40"
+                    className="w-full bg-gray-50 border border-gray-200 py-4 pl-12 pr-4 rounded-full outline-none focus:border-red-600 transition-all text-sm text-gray-900 placeholder:text-gray-400"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -384,7 +442,7 @@ export default function MapPage() {
                       className={`flex items-center space-x-2 px-4 py-2 rounded-full border text-[11px] font-bold transition-all ${
                         activeCategory === cat.id
                           ? 'bg-red-600 border-red-600 text-white'
-                          : 'bg-black/20 border-white/10 text-white/70 hover:border-white/20 hover:text-white'
+                          : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300 hover:text-gray-900'
                       }`}
                     >
                       {cat.icon}
@@ -394,7 +452,7 @@ export default function MapPage() {
                 </div>
               </div>
 
-              <div className="max-h-[520px] overflow-y-auto custom-scrollbar map-scrollbar border-t border-white/10">
+              <div className="max-h-[520px] overflow-y-auto custom-scrollbar map-scrollbar border-t border-gray-200">
                 <AnimatePresence mode="popLayout">
                   {filteredPlaces.map((place, idx) => (
                     <motion.button
@@ -404,38 +462,38 @@ export default function MapPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.98 }}
                       transition={{ delay: idx * 0.03 }}
-                      onClick={() => setSelectedId(place.id)}
-                      className={`w-full text-left p-6 border-b border-white/10 transition-all ${
-                        selectedId === place.id ? 'bg-white/10' : 'bg-transparent hover:bg-white/5'
+                      onClick={() => selectPlace(place.id)}
+                      className={`w-full text-left p-6 border-b border-gray-100 transition-all ${
+                        selectedId === place.id ? 'bg-gray-50' : 'bg-transparent hover:bg-gray-50'
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/40">{t(place.category === 'nature' ? 'Thiên nhiên' : place.category === 'culture' ? 'Văn hóa' : 'Ẩm thực')}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">{t(place.category === 'nature' ? 'Thiên nhiên' : place.category === 'culture' ? 'Văn hóa' : 'Ẩm thực')}</p>
                         <div className="flex items-center space-x-1 text-red-500 bg-red-600/10 px-2 py-1 rounded-full">
                           <Star size={10} className="fill-red-500" />
-                          <span className="text-[11px] font-bold text-white/90">{place.rating}</span>
+                          <span className="text-[11px] font-bold text-gray-900">{place.rating}</span>
                         </div>
                       </div>
                       <div className="mt-2 flex items-center justify-between gap-4">
-                        <h4 className="text-xl font-bold font-serif text-white leading-tight">{t(place.name)}</h4>
+                        <h4 className="text-xl font-bold font-serif text-gray-900 leading-tight">{t(place.name)}</h4>
                         <div className={`p-2 border rounded-full transition-all ${
-                          selectedId === place.id ? 'bg-red-600 text-white border-red-600' : 'border-white/15 text-white/70'
+                          selectedId === place.id ? 'bg-red-600 text-white border-red-600' : 'border-gray-200 text-gray-600'
                         }`}>
                           <ChevronRight size={12} />
                         </div>
                       </div>
-                      <p className="mt-2 text-sm text-white/55 font-light leading-relaxed line-clamp-2">{t(place.desc)}</p>
-                      <p className="mt-3 text-[11px] text-white/40">{t(place.vibe)}</p>
+                      <p className="mt-2 text-sm text-gray-600 font-light leading-relaxed line-clamp-2">{t(place.desc)}</p>
+                      <p className="mt-3 text-[11px] text-gray-500">{t(place.vibe)}</p>
                     </motion.button>
                   ))}
                 </AnimatePresence>
 
                 {filteredPlaces.length === 0 && (
                   <div className="p-10 text-center space-y-3">
-                    <div className="w-12 h-12 border border-dashed border-white/15 rounded-full flex items-center justify-center mx-auto">
-                      <Search size={20} className="text-white/40" />
+                    <div className="w-12 h-12 border border-dashed border-gray-200 rounded-full flex items-center justify-center mx-auto">
+                      <Search size={20} className="text-gray-400" />
                     </div>
-                    <p className="text-sm text-white/60">{t('Không tìm thấy kết quả')}</p>
+                    <p className="text-sm text-gray-600">{t('Không tìm thấy kết quả')}</p>
                   </div>
                 )}
               </div>
@@ -445,7 +503,7 @@ export default function MapPage() {
           <div className="lg:col-span-7 space-y-6">
             <div
               ref={mapWrapperRef}
-              className="relative h-[420px] sm:h-[520px] lg:h-[640px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl"
+              className="relative h-[420px] sm:h-[520px] lg:h-[640px] overflow-hidden rounded-[2rem] border border-gray-200 bg-white shadow-xl"
             >
               <div className="absolute inset-0">
                 <MapErrorBoundary fallback={mapFallback}>
@@ -455,67 +513,77 @@ export default function MapPage() {
 
               <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute -top-40 -left-40 w-[520px] h-[520px] bg-red-600/20 blur-[90px]" />
-                <div className="absolute -bottom-40 -right-40 w-[520px] h-[520px] bg-white/5 blur-[90px]" />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-black/45" />
+                <div className="absolute -bottom-40 -right-40 w-[520px] h-[520px] bg-gray-200/40 blur-[90px]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-white/0 via-white/0 to-white/0" />
               </div>
 
-              <div className="absolute top-5 right-5 flex items-center space-x-2 pointer-events-auto">
+              <div className="absolute top-5 right-5 z-[1000] flex items-center space-x-2 pointer-events-auto">
                 <button
                   onClick={() => setTileMode((m) => (m === 'dark' ? 'light' : 'dark'))}
-                  className="inline-flex items-center space-x-2 px-3 py-2 rounded-full border border-white/10 bg-black/30 text-white/80 hover:text-white hover:border-white/20 transition-colors text-[11px] font-bold"
+                  className="inline-flex items-center space-x-2 px-3 py-2 rounded-full border border-gray-200 bg-white/90 text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors text-[11px] font-bold"
                 >
                   <Layers size={14} />
                   <span>{tiles[tileMode].name}</span>
                 </button>
                 <button
                   onClick={resetView}
-                  className="w-10 h-10 rounded-full border border-white/10 bg-black/30 text-white/80 hover:text-white hover:border-white/20 transition-colors inline-flex items-center justify-center"
+                  className="w-10 h-10 rounded-full border border-gray-200 bg-white/90 text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors inline-flex items-center justify-center"
                   aria-label={t('Đặt lại góc nhìn')}
                 >
                   <MapPin size={18} />
                 </button>
                 <button
                   onClick={toggleFullscreen}
-                  className="w-10 h-10 rounded-full border border-white/10 bg-black/30 text-white/80 hover:text-white hover:border-white/20 transition-colors inline-flex items-center justify-center"
+                  className="w-10 h-10 rounded-full border border-gray-200 bg-white/90 text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors inline-flex items-center justify-center"
                   aria-label={t('Toàn màn hình')}
                 >
                   {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
                 </button>
               </div>
 
-              <div className="absolute left-6 bottom-6 right-6 pointer-events-none">
-                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-                  <div className="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-xl px-5 py-4">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/60">{t('Điểm đang chọn')}</p>
-                    <p className="mt-2 text-2xl font-bold font-serif text-white leading-tight">{t(selectedPlace.name)}</p>
-                    <p className="mt-2 text-white/55 text-sm leading-relaxed max-w-xl">{t(selectedPlace.desc)}</p>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-xl px-5 py-4">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/60">{t('Toạ độ')}</p>
-                    <p className="mt-2 text-white/80 text-sm font-mono">
-                      {selectedPlace.lat.toFixed(4)}, {selectedPlace.lng.toFixed(4)}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <AnimatePresence initial={false}>
+                {!isMapMoving && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute left-6 bottom-6 right-6 z-[1000] pointer-events-none"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                      <div className="rounded-2xl border border-gray-200 bg-white/90 backdrop-blur-xl px-5 py-4">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-500">{t('Điểm đang chọn')}</p>
+                        <p className="mt-2 text-2xl font-bold font-serif text-gray-900 leading-tight">{t(selectedPlace.name)}</p>
+                        <p className="mt-2 text-gray-600 text-sm leading-relaxed max-w-xl">{t(selectedPlace.desc)}</p>
+                      </div>
+                      <div className="rounded-2xl border border-gray-200 bg-white/90 backdrop-blur-xl px-5 py-4">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-500">{t('Toạ độ')}</p>
+                        <p className="mt-2 text-gray-700 text-sm font-mono">
+                          {selectedPlace.lat.toFixed(4)}, {selectedPlace.lng.toFixed(4)}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
-            <div className="rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl overflow-hidden">
+            <div className="rounded-[2rem] border border-gray-200 bg-white shadow-xl overflow-hidden">
               <div className="p-6 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-9 h-9 rounded-full bg-red-600/20 border border-red-600/30 flex items-center justify-center">
                     <Route size={18} className="text-red-500" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/60">{t('Lộ trình')}</p>
-                    <p className="text-white/70 text-sm font-light">{routeIds.length} {t('điểm')} • {routeKm.toFixed(1)} km</p>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-500">{t('Lộ trình')}</p>
+                    <p className="text-gray-600 text-sm font-light">{routeIds.length} {t('điểm')} • {routeKm.toFixed(1)} km</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={() => toggleStop(selectedPlace.id)}
                     className={`px-4 py-2 rounded-full font-bold text-[11px] uppercase tracking-widest transition-colors ${
-                      routeIds.includes(selectedPlace.id) ? 'bg-white/10 text-white hover:bg-white/15' : 'bg-red-600 text-white hover:bg-red-700'
+                      routeIds.includes(selectedPlace.id) ? 'bg-gray-100 text-gray-800 hover:bg-gray-200' : 'bg-red-600 text-white hover:bg-red-700'
                     }`}
                   >
                     <span className="inline-flex items-center justify-center space-x-2">
@@ -525,7 +593,7 @@ export default function MapPage() {
                   </button>
                   <button
                     onClick={clearRoute}
-                    className="px-4 py-2 rounded-full bg-black/30 border border-white/10 text-white/80 hover:text-white hover:border-white/20 transition-colors text-[11px] font-bold"
+                    className="px-4 py-2 rounded-full bg-white border border-gray-200 text-gray-700 hover:text-gray-900 hover:border-gray-300 transition-colors text-[11px] font-bold"
                   >
                     {t('Xóa')}
                   </button>
@@ -534,13 +602,13 @@ export default function MapPage() {
 
               <div className="px-6 pb-6 flex flex-wrap gap-2">
                 {routePlaces.length === 0 ? (
-                  <span className="text-white/55 text-sm">{t('Thêm vài điểm để vẽ lộ trình trên bản đồ.')}</span>
+                  <span className="text-gray-600 text-sm">{t('Thêm vài điểm để vẽ lộ trình trên bản đồ.')}</span>
                 ) : (
                   routePlaces.map((p, idx) => (
                     <button
                       key={p.id}
-                      onClick={() => setSelectedId(p.id)}
-                      className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/10 text-white hover:bg-white/15 transition-colors text-[11px] font-bold"
+                      onClick={() => selectPlace(p.id)}
+                      className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 transition-colors text-[11px] font-bold"
                     >
                       <span className="w-2 h-2 rounded-full" style={{ background: markerColor(p.category) }} />
                       <span>{idx + 1}. {t(p.name)}</span>
@@ -555,7 +623,7 @@ export default function MapPage() {
 
       <style>{`
         .na-leaflet-pin { background: transparent; border: none; }
-        .leaflet-container { background: #0b0b0b; }
+        .leaflet-container { background: #ffffff; }
         .leaflet-control-container { display: none; }
         .leaflet-tooltip { background: rgba(0,0,0,0.65); color: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.12); border-radius: 9999px; padding: 6px 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .leaflet-tooltip:before { border-top-color: rgba(255,255,255,0.12); }

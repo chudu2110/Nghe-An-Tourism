@@ -12,7 +12,7 @@ const viGiamSound = new URL('../../Sound/Đừng Trách Câu Ví Dặm  - Cáp A
 export default function FoodCulture() {
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const navigate = useNavigate();
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -71,9 +71,9 @@ export default function FoodCulture() {
                     {t('Di sản & Hương vị')}
                   </span>
                 </div>
-                <h1 className="text-7xl md:text-[10rem] font-bold mb-10 font-serif leading-[0.8] tracking-tighter">
+                <h1 className={`text-5xl md:text-[8.5rem] font-bold mb-10 font-serif ${lang === 'vi' ? 'leading-[1.2]' : 'leading-[1.0]'} tracking-tighter`}>
                   {t('Hồn cốt')} <br />
-                  <span className="italic text-red-600 ml-4 md:ml-20">{t('Xứ Nghệ.')}</span>
+                  <span className="italic text-red-600 ml-4 md:ml-20">{t('Xứ Nghệ')}</span>
                 </h1>
                 <p className="text-gray-400 text-xl max-w-2xl mb-12 leading-relaxed font-light">
                   {t('Khám phá chiều sâu văn hóa qua những làn điệu Ví Giặm và hương vị đậm đà của những món ăn đã đi vào thơ ca, nhạc họa.')}
@@ -129,7 +129,7 @@ export default function FoodCulture() {
               <div className="space-y-6">
                 <span className="text-red-600 font-bold tracking-[0.4em] uppercase text-[10px] block">{t('Triết lý vị giác')}</span>
                 <h2 className="text-6xl md:text-8xl font-bold font-serif leading-[0.9] tracking-tighter text-gray-900">
-                  {t('Mặn mòi')} <br /> <span className="text-red-600 italic">{t('vị đất Lam.')}</span>
+                  {t('Mặn mòi')} <br /> <span className="text-red-600 italic">{t('vị đất Lam')}</span>
                 </h2>
               </div>
               
@@ -186,7 +186,7 @@ export default function FoodCulture() {
             <div className="space-y-6">
               <span className="text-red-500 font-bold tracking-[0.4em] uppercase text-[10px] block">{t('Danh mục đặc sản')}</span>
               <h2 className="text-6xl md:text-9xl font-bold font-serif leading-none tracking-tighter">
-                {t('Tinh hoa')} <br /> <span className="text-red-500 italic">{t('ẩm thực.')}</span>
+                {t('Tinh hoa')} <br /> <span className="text-red-500 italic">{t('ẩm thực')}</span>
               </h2>
             </div>
             <div className="max-w-xs text-right mt-12 md:mt-0">
@@ -208,43 +208,79 @@ export default function FoodCulture() {
                 <img 
                   src={foodCultureImage('Bánh mướt thanh chương.webp')}
                   alt={t('Bánh Mướt Thanh Chương')}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+                  className="w-full h-full object-cover transition-all duration-1000"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity" />
                 <div className="absolute bottom-10 left-10 space-y-2">
                   <span className="text-red-500 font-bold text-[10px] uppercase tracking-widest">{t('Món ăn sáng quốc dân')}</span>
-                  <h3 className="text-4xl font-bold font-serif">{t('Bánh Mướt Thanh Chương')}</h3>
+                  <h3 className="text-4xl font-bold font-serif">
+                    <a
+                      href="https://mia.vn/cam-nang-du-lich/dac-san-banh-muot-nghe-an-13348"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:underline"
+                    >
+                      {t('Bánh Mướt Thanh Chương')}
+                    </a>
+                  </h3>
                 </div>
               </motion.div>
               
               <div className="grid grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <div className="aspect-square overflow-hidden rounded-sm relative group">
+                <div id="chao-canh-thanh-vinh" className="space-y-6">
+                  <motion.div
+                    whileHover={{ scale: 0.98 }}
+                    transition={{ duration: 0.7 }}
+                    className="aspect-square overflow-hidden rounded-sm relative group"
+                  >
                     <img 
-                      src={foodCultureImage('bánh cu đơ.png')}
-                      alt={t('Kẹo Cu Đơ')}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+                      src={foodCultureImage('Cháo canh thành Vinh.webp')}
+                      alt={t('Cháo canh thành Vinh')}
+                      className="w-full h-full object-cover transition-all duration-1000"
                       referrerPolicy="no-referrer"
                     />
-                    <div className="absolute inset-0 bg-red-600/20 mix-blend-multiply opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity" />
+                  </motion.div>
                   <div className="space-y-2">
-                    <h4 className="font-bold text-lg font-serif">{t('Kẹo Cu Đơ')}</h4>
-                    <p className="text-gray-500 text-xs font-light leading-relaxed">{t('Sự kết hợp hoàn hảo giữa mật mía, lạc rang và gừng cay.')}</p>
+                    <h4 className="font-bold text-lg font-serif">
+                      <a
+                        href="https://mia.vn/cam-nang-du-lich/chao-canh-nghe-an-15270"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="hover:underline"
+                      >
+                        {t('Cháo canh thành Vinh')}
+                      </a>
+                    </h4>
+                    <p className="text-gray-500 text-xs font-light leading-relaxed">{t('Sự kết hợp hài hòa giữa sợi bánh dai mềm, nước dùng thanh ngọt và các loại topping như thịt heo, chả, trứng cút luộc, thịt cá hoặc tôm.')}</p>
                   </div>
                 </div>
                 <div id="nhut-thanh-chuong" className="space-y-6 pt-12">
-                  <div className="aspect-square overflow-hidden rounded-sm relative group">
+                  <motion.div
+                    whileHover={{ scale: 0.98 }}
+                    transition={{ duration: 0.7 }}
+                    className="aspect-square overflow-hidden rounded-sm relative group"
+                  >
                     <img 
                       src={foodCultureImage('Nhút thanh chương.jpg')}
                       alt={t('Nhút Thanh Chương')}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+                      className="w-full h-full object-cover transition-all duration-1000"
                       referrerPolicy="no-referrer"
                     />
-                  </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity" />
+                  </motion.div>
                   <div className="space-y-2">
-                    <h4 className="font-bold text-lg font-serif">{t('Nhút Thanh Chương')}</h4>
+                    <h4 className="font-bold text-lg font-serif">
+                      <a
+                        href="https://dbndnghean.vn/nhut-thanh-chuong-huong-vi-dac-san-xu-nghe-8497.htm"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="hover:underline"
+                      >
+                        {t('Nhút Thanh Chương')}
+                      </a>
+                    </h4>
                     <p className="text-gray-500 text-xs font-light leading-relaxed">{t('Món ăn dân dã làm từ xơ mít non, biểu tượng của sự chắt chiu.')}</p>
                   </div>
                 </div>
@@ -255,7 +291,16 @@ export default function FoodCulture() {
             <div className="md:col-span-5 space-y-12 md:pt-32">
               <div id="sup-luon-vinh" className="p-12 bg-white/5 border border-white/10 rounded-sm space-y-8">
                 <div className="text-5xl font-serif italic text-red-500 opacity-50">01</div>
-                <h3 className="text-3xl font-bold font-serif leading-tight">{t('Súp Lươn Vinh -')} <br /> {t('Đánh thức mọi giác quan.')}</h3>
+                <h3 className="text-3xl font-bold font-serif leading-tight">
+                  <a
+                    href="https://vinpearl.com/vi/sup-luon-nghe-an-mot-trong-7-mon-an-doc-dao-nhat-the-gioi"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:underline"
+                  >
+                    {t('Súp Lươn Vinh -')} <br /> {t('Đánh thức mọi giác quan.')}
+                  </a>
+                </h3>
                 <p className="text-gray-400 text-sm font-light leading-relaxed">
                   {t('Thịt lươn đồng béo ngậy, hành tăm thơm nồng và vị cay đặc trưng tạo nên một trải nghiệm ẩm thực không thể nào quên khi đặt chân đến thành phố Vinh.')}
                 </p>
@@ -271,24 +316,36 @@ export default function FoodCulture() {
                 </div>
               </div>
 
-              <motion.div 
-                initial={{ y: 50 }}
-                whileInView={{ y: 0 }}
-                className="aspect-[3/4] overflow-hidden rounded-sm relative group"
-              >
-                <img 
-                  src={foodCultureImage('đặc sản nam đàn.jpg')}
-                  alt={t('Bê Thui')}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gray-950/40" />
-                <div className="absolute top-10 right-10">
-                  <div className="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center text-[10px] font-bold uppercase tracking-widest text-center leading-tight p-4 backdrop-blur-sm">
-                    {t('Đặc sản Nam Đàn')}
-                  </div>
+              <div className="space-y-6">
+                <motion.div 
+                  initial={{ y: 50 }}
+                  whileInView={{ y: 0 }}
+                  whileHover={{ scale: 0.98 }}
+                  transition={{ duration: 0.7 }}
+                  className="aspect-[3/4] overflow-hidden rounded-sm relative group"
+                >
+                  <img 
+                    src={foodCultureImage('đặc sản nam đàn.jpg')}
+                    alt={t('Thịt me, thịt nghé Nam Nghĩa')}
+                    className="w-full h-full object-cover transition-all duration-1000"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity" />
+                </motion.div>
+                <div className="space-y-2">
+                  <h4 className="font-bold text-lg font-serif">
+                    <a
+                      href="https://baonghean.vn/ngot-thom-thit-me-nam-nghia-10101684.html"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:underline"
+                    >
+                      {t('Thịt me, thịt nghé Nam Nghĩa')}
+                    </a>
+                  </h4>
+                  <p className="text-gray-500 text-xs font-light leading-relaxed">{t('Thịt me, thịt nghé Nam Nghĩa có vị ngọt, dai dai, giòn sần sật từ lớp da và mùi thơm hương đồng cỏ nội độc đáo.')}</p>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </div>
@@ -307,7 +364,7 @@ export default function FoodCulture() {
                   <span className="text-red-600 font-bold tracking-[0.4em] uppercase text-[10px]">{t('Di sản phi vật thể')}</span>
                 </div>
                 <h2 className="text-7xl md:text-9xl font-bold font-serif leading-[0.85] tracking-tighter text-gray-900">
-                  {t('Ví Giặm')} <br /> <span className="text-red-600 italic">{t('ân tình.')}</span>
+                  {t('Ví Giặm')} <br /> <span className="text-red-600 italic">{t('ân tình')}</span>
                 </h2>
               </div>
 
@@ -432,21 +489,22 @@ export default function FoodCulture() {
             <div className="p-12 lg:p-24 space-y-12 border-b lg:border-b-0 lg:border-r border-gray-900">
               <div className="space-y-6">
                 <span className="text-red-600 font-mono text-xs font-bold tracking-[0.5em] uppercase">{t('Làng nghề truyền thống')}</span>
-                <h2 className="text-5xl md:text-7xl font-bold font-serif leading-tight tracking-tighter text-gray-900">{t('Bàn tay')} <br /> <span className="text-red-600 italic">{t('tài hoa.')}</span></h2>
+                <h2 className="text-5xl md:text-7xl font-bold font-serif leading-tight tracking-tighter text-gray-900">{t('Bàn tay')} <br /> <span className="text-red-600 italic">{t('tài hoa')}</span></h2>
               </div>
               <p className="text-gray-500 text-lg font-light leading-relaxed">
                 {t('Những làng nghề hàng trăm năm tuổi vẫn đang âm thầm giữ lửa, biến những nguyên liệu thô sơ thành những tác phẩm nghệ thuật đầy hồn cốt.')}
               </p>
               <div className="pt-12">
-                <button
-                  type="button"
-                  onClick={() => navigate('/map')}
+                <a
+                  href="https://baonghean.vn/nhung-lang-nghe-khong-nen-bo-lo-khi-ve-voi-nghe-an-10187251.html"
+                  target="_blank"
+                  rel="noreferrer"
                   className="group flex items-center space-x-8 text-gray-900 font-bold uppercase tracking-widest text-xs"
                 >
-                  <span>{t('Khám phá bản đồ làng nghề')}</span>
+                  <span>{t('Tìm hiểu thêm')}</span>
                   <div className="w-20 h-[1px] bg-gray-200 group-hover:w-32 group-hover:bg-red-600 transition-all duration-500" />
                   <ArrowRight size={20} className="group-hover:text-red-600 transition-colors" />
-                </button>
+                </a>
               </div>
             </div>
 
@@ -456,32 +514,36 @@ export default function FoodCulture() {
                   title: 'Gốm Trù Sơn', 
                   image: foodCultureImage('gốm trù sơn.webp'), 
                   desc: 'Gốm mộc không men, nung củi.',
-                  loc: 'Đô Lương'
+                  loc: 'Đô Lương',
+                  link: 'https://vietnamtourism.gov.vn/post/23072'
                 },
                 { 
                   title: 'Dệt Thổ Cẩm', 
                   image: foodCultureImage('dệt thổ cẩm.jpg'), 
                   desc: 'Sắc màu của núi rừng Tây Bắc.',
-                  loc: 'Quỳ Châu'
+                  loc: 'Quỳ Châu',
+                  link: 'https://vietnamtourism.gov.vn/post/63326'
                 },
                 { 
                   title: 'Đúc Đồng', 
                   image: foodCultureImage('đúc đồng.webp'), 
                   desc: 'Tinh hoa đúc đồng ngàn năm.',
-                  loc: 'Hưng Nguyên'
+                  loc: 'Hưng Nguyên',
+                  link: 'https://tapchicongthuong.vn/lang-nghe-duc-dong-con-cat-2738.htm'
                 },
                 { 
                   title: 'Mây Tre Đan', 
                   image: foodCultureImage('mây tre đan.jpg'), 
                   desc: 'Sự dẻo dai của tâm hồn Việt.',
-                  loc: 'Nghi Lộc'
+                  loc: 'Nghi Lộc',
+                  link: 'https://baonghean.vn/may-tre-dan-vung-cao-nghe-an-vuon-ra-the-gioi-10292839.html'
                 }
               ].map((item, i) => (
                 <div key={i} className="group relative aspect-square overflow-hidden border-r border-b border-gray-900 last:border-r-0">
                   <img 
                     src={item.image} 
                     alt={t(item.title)} 
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110"
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-gray-950/60 group-hover:bg-gray-950/20 transition-all duration-500" />
@@ -490,7 +552,18 @@ export default function FoodCulture() {
                       <div className="w-1.5 h-1.5 bg-red-500 rounded-full" />
                       <span className="text-[10px] font-bold uppercase tracking-widest">{t(item.loc)}</span>
                     </div>
-                    <h4 className="text-xl font-bold font-serif mb-1 text-white">{t(item.title)}</h4>
+                    {item.link ? (
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xl font-bold font-serif mb-1 text-white hover:underline underline-offset-4"
+                      >
+                        {t(item.title)}
+                      </a>
+                    ) : (
+                      <h4 className="text-xl font-bold font-serif mb-1 text-white">{t(item.title)}</h4>
+                    )}
                     <p className="text-gray-400 text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">{t(item.desc)}</p>
                   </div>
                 </div>
@@ -506,7 +579,7 @@ export default function FoodCulture() {
           <div className="text-center mb-32 space-y-6">
             <span className="text-red-600 font-bold tracking-[0.4em] uppercase text-[10px] block">{t('Lịch trình văn hóa')}</span>
             <h2 className="text-6xl md:text-9xl font-bold font-serif tracking-tighter text-gray-900">
-              {t('Mùa lễ hội')} <br /> <span className="text-red-600 italic">{t('trường tồn.')}</span>
+              {t('Mùa lễ hội')} <br /> <span className="text-red-600 italic">{t('trường tồn')}</span>
             </h2>
           </div>
 
@@ -565,7 +638,7 @@ export default function FoodCulture() {
           >
             <h2 className="text-5xl md:text-[6rem] font-bold font-serif tracking-tighter leading-[0.9] mb-12">
               {t('Hương vị là')} <span className="text-red-600 italic">{t('ký ức,')}</span> <br /> 
-              {t('Văn hóa là')} <span className="text-red-600 italic">{t('tâm hồn.')}</span>
+              {t('Văn hóa là')} <span className="text-red-600 italic">{t('tâm hồn')}</span>
             </h2>
             <p className="text-gray-400 text-xl font-light leading-relaxed max-w-3xl mx-auto">
               {t('Hãy để mỗi món ăn, mỗi làn điệu dẫn lối bạn vào sâu thẳm tâm hồn của mảnh đất Nghệ An đầy nắng gió nhưng cũng đầy ân tình.')}
@@ -591,12 +664,6 @@ export default function FoodCulture() {
           </div>
         </div>
 
-        {/* Decorative Background Text */}
-        <div className="absolute -bottom-20 left-0 right-0 overflow-hidden whitespace-nowrap opacity-[0.02] select-none pointer-events-none">
-          <span className="text-[20rem] font-serif font-bold italic uppercase tracking-tighter">
-            {t('DI SẢN & HỒN ẨM THỰC XỨ NGHỆ')}
-          </span>
-        </div>
       </section>
 
       {/* Footer Quick Links - Professional Grid */}

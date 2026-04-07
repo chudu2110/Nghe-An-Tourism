@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { MapPin, Compass, Camera, Mountain, Waves, Landmark, ArrowRight, Sparkles, Star, Zap, Clock, Users, Quote, MoveRight, Play, Trees, ScrollText, Music, Flame, Utensils } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,43 @@ import { useI18n } from '../i18n';
 
 const experienceImage = (fileName: string) =>
   new URL(`../../Experiences img/${fileName}`, import.meta.url).href;
+
+function getYouTubeId(rawUrl: string) {
+  try {
+    const url = new URL(rawUrl);
+    const host = url.hostname.replace(/^www\./, '');
+
+    if (host === 'youtu.be') {
+      const id = url.pathname.split('/').filter(Boolean)[0];
+      return id || null;
+    }
+
+    if (host.endsWith('youtube.com')) {
+      if (url.pathname === '/watch') return url.searchParams.get('v');
+      if (url.pathname.startsWith('/embed/')) return url.pathname.split('/')[2] || null;
+      if (url.pathname.startsWith('/shorts/')) return url.pathname.split('/')[2] || null;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function toVideoEmbedSrc(rawUrl: string, origin?: string) {
+  const ytId = getYouTubeId(rawUrl);
+  if (ytId) {
+    const params = new URLSearchParams({
+      autoplay: '1',
+      rel: '0',
+      modestbranding: '1',
+      playsinline: '1',
+    });
+    if (origin) params.set('origin', origin);
+    return `https://www.youtube-nocookie.com/embed/${ytId}?${params.toString()}`;
+  }
+  return null;
+}
 
 const experienceCategories = [
   {
@@ -66,6 +103,18 @@ export default function Experiences() {
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const { t, lang } = useI18n();
   const navigate = useNavigate();
+  const [openJourneyId, setOpenJourneyId] = useState<string | null>(null);
+  const embedOrigin = useMemo(() => (typeof window !== 'undefined' ? window.location.origin : ''), []);
+
+  const activeJourney = useMemo(() => {
+    if (!openJourneyId) return null;
+    return featuredJourneys.find((j) => j.id === openJourneyId) ?? null;
+  }, [openJourneyId]);
+
+  const activeJourneyEmbedSrc = useMemo(() => {
+    if (!activeJourney?.link) return null;
+    return toVideoEmbedSrc(activeJourney.link, embedOrigin || undefined);
+  }, [activeJourney, embedOrigin]);
 
   return (
     <div className="pt-20 bg-[#fdfcf9] overflow-hidden">
@@ -96,7 +145,7 @@ export default function Experiences() {
             <h1 className="text-7xl md:text-[10rem] font-bold text-gray-900 leading-[0.8] tracking-tighter font-serif">
               {t('Trải')}
               {lang === 'vi' ? ' ' : ''}
-              <span className="italic text-red-600">{t('nghiệm.')}</span>
+              <span className="italic text-red-600">{t('nghiệm')}</span>
             </h1>
             
             <p className="text-gray-500 text-xl max-w-2xl mx-auto font-light leading-relaxed">
@@ -168,7 +217,7 @@ export default function Experiences() {
                   </div>
                 </div>
 
-                <div className="mt-16 aspect-[4/5] overflow-hidden rounded-2xl grayscale group-hover:grayscale-0 transition-all duration-1000">
+                <div className="mt-16 aspect-[4/5] overflow-hidden rounded-2xl transition-all duration-1000">
                   <img src={cat.image} alt={t(cat.title)} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000" />
                 </div>
               </motion.div>
@@ -216,27 +265,6 @@ export default function Experiences() {
                           </span>
                         ))}
                       </div>
-                      <div className="pt-8">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (journey.link) {
-                              window.open(journey.link, '_blank', 'noopener,noreferrer');
-                            } else {
-                              navigate('/blog');
-                            }
-                          }}
-                          className="flex items-center space-x-6 group/play"
-                        >
-                          <div className="w-20 h-20 rounded-full bg-red-600 flex items-center justify-center group-hover/play:scale-110 transition-transform">
-                            <Play size={24} fill="white" />
-                          </div>
-                          <div className="space-y-1">
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{t('Xem trải nghiệm')}</p>
-                            <p className="text-white font-serif italic text-lg">{t('Hành trình thực tế')}</p>
-                          </div>
-                        </button>
-                      </div>
                     </div>
                   </motion.div>
                 </div>
@@ -249,20 +277,52 @@ export default function Experiences() {
                     transition={{ duration: 1 }}
                     className="relative aspect-[16/10] rounded-[3rem] overflow-hidden shadow-2xl"
                   >
-                    <img src={journey.image} alt={t(journey.title)} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-950/60 to-transparent" />
-                    <div className="absolute bottom-12 left-12 right-12 flex justify-between items-end">
-                      <div className="space-y-2">
-                        <p className="text-[10px] uppercase tracking-widest text-white/60">{t('Đánh giá')}</p>
-                        <div className="flex text-amber-400">
-                          {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
+                    {openJourneyId === journey.id ? (
+                      <>
+                        {activeJourneyEmbedSrc ? (
+                          <iframe
+                            key={activeJourneyEmbedSrc}
+                            src={activeJourneyEmbedSrc}
+                            title={t(journey.title)}
+                            className="w-full h-full"
+                            allow="autoplay; encrypted-media; picture-in-picture; web-share; fullscreen"
+                            allowFullScreen
+                          />
+                        ) : (
+                          <img src={journey.image} alt={t(journey.title)} className="w-full h-full object-cover" />
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <img src={journey.image} alt={t(journey.title)} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-gray-950/60 to-transparent" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!journey.link) return navigate('/blog');
+                            setOpenJourneyId((prev) => (prev === journey.id ? null : journey.id));
+                          }}
+                          className="absolute inset-0 flex items-center justify-center group/play"
+                          aria-label={t('Phát video')}
+                        >
+                          <div className="w-20 h-20 rounded-full bg-red-600 flex items-center justify-center shadow-2xl shadow-red-600/30 group-hover/play:scale-110 transition-transform">
+                            <Play size={24} fill="white" />
+                          </div>
+                        </button>
+                        <div className="absolute bottom-12 left-12 right-12 flex justify-between items-end">
+                          <div className="space-y-2">
+                            <p className="text-[10px] uppercase tracking-widest text-white/60">{t('Đánh giá')}</p>
+                            <div className="flex text-amber-400">
+                              {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-4 text-white">
+                            <Users size={20} />
+                            <span className="text-sm font-bold">{t('1.2k+ đã trải nghiệm')}</span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center space-x-4 text-white">
-                        <Users size={20} />
-                        <span className="text-sm font-bold">{t('1.2k+ đã trải nghiệm')}</span>
-                      </div>
-                    </div>
+                      </>
+                    )}
                   </motion.div>
                 </div>
               </div>
@@ -275,7 +335,7 @@ export default function Experiences() {
       <section className="py-40 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between mb-32 border-b border-gray-900 pb-16">
-            <h2 className="text-6xl md:text-8xl font-bold font-serif tracking-tighter mb-8 md:mb-0">{t('Nhịp sống')} <br /> <span className="text-red-600 italic">{t('bản địa.')}</span></h2>
+            <h2 className="text-6xl md:text-8xl font-bold font-serif tracking-tighter mb-8 md:mb-0">{t('Nhịp sống')} <br /> <span className="text-red-600 italic">{t('bản địa')}</span></h2>
             <div className="max-w-xs text-right">
               <p className="text-gray-500 text-sm leading-relaxed font-light italic">
                 {t('"Đừng chỉ là du khách, hãy trở thành một phần của mảnh đất này qua những hoạt động thường nhật."')}
@@ -285,12 +345,17 @@ export default function Experiences() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border border-gray-900">
             {[
-              { title: 'Chèo thuyền Kayak', icon: <Waves />, desc: 'Lướt trên dòng Lam thơ mộng lúc hoàng hôn.', color: 'bg-blue-50' },
-              { title: 'Trekking rừng sâu', icon: <Compass />, desc: 'Thử thách bản lĩnh tại vùng lõi Pù Mát.', color: 'bg-emerald-50' },
-              { title: 'Săn ảnh di tích', icon: <Camera />, desc: 'Ghi lại hồn cốt lịch sử qua ống kính.', color: 'bg-amber-50' },
-              { title: 'Tour ẩm thực đêm', icon: <Flame />, desc: 'Thưởng thức vị cay nồng của súp lươn Vinh.', color: 'bg-red-50' }
+              { title: 'Chèo thuyền Kayak', icon: <Waves />, desc: 'Lướt trên dòng Lam thơ mộng lúc hoàng hôn.', color: 'bg-blue-50', link: 'https://dttc.sggp.org.vn/trai-nghiem-non-nuoc-voi-voi-kayak-sup-post103792.html' },
+              { title: 'Trekking rừng sâu', icon: <Compass />, desc: 'Thử thách bản lĩnh tại vùng lõi Pù Mát.', color: 'bg-emerald-50', link: 'https://baonghean.vn/nhung-trai-nghiem-thu-vi-moi-o-mien-tay-nghe-an-10245406.html' },
+              { title: 'Săn ảnh di tích', icon: <Camera />, desc: 'Ghi lại hồn cốt lịch sử qua ống kính.', color: 'bg-amber-50', link: 'https://vinpearl.com/vi/9-di-tich-lich-su-o-nghe-an-thu-hut-hang-trieu-du-khach-moi-nam' },
+              { title: 'Tour ẩm thực đêm', icon: <Flame />, desc: 'Thưởng thức vị cay nồng của súp lươn Vinh.', color: 'bg-red-50', link: 'https://dulichvietnam.com.vn/pho-am-thuc-dem-thanh-co-vinh.html' }
             ].map((item, idx) => (
-              <div key={idx} className={`p-16 group hover:bg-gray-900 transition-all duration-500 border-gray-900 ${idx !== 3 ? 'lg:border-r' : ''} ${idx !== 0 ? 'border-t lg:border-t-0' : ''}`}>
+              <button
+                key={idx}
+                type="button"
+                onClick={() => window.open(item.link, '_blank', 'noopener,noreferrer')}
+                className={`p-16 group hover:bg-gray-900 transition-all duration-500 border-gray-900 text-left ${idx !== 3 ? 'lg:border-r' : ''} ${idx !== 0 ? 'border-t lg:border-t-0' : ''}`}
+              >
                 <div className="mb-12 transform group-hover:scale-110 group-hover:-rotate-12 transition-all duration-500 text-gray-900 group-hover:text-red-600">
                   {React.cloneElement(item.icon as React.ReactElement, { size: 48, strokeWidth: 1 })}
                 </div>
@@ -299,7 +364,7 @@ export default function Experiences() {
                 <div className="mt-12 opacity-0 group-hover:opacity-100 transition-opacity">
                   <ArrowRight className="text-red-600" size={24} />
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -309,8 +374,6 @@ export default function Experiences() {
       <section className="py-40 bg-[#f5f2ed] relative overflow-hidden">
         {/* Background Decorative Elements */}
         <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
-          <div className="absolute top-20 left-10 rotate-12 border border-black/20 p-4 text-8xl font-serif italic">{t('Bưu thiếp')}</div>
-          <div className="absolute bottom-20 right-10 -rotate-12 border border-black/20 p-4 text-8xl font-serif italic">{t('Ký ức')}</div>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -325,8 +388,8 @@ export default function Experiences() {
                   whileInView={{ rotate: -2, x: 0 }}
                   className="absolute inset-0 bg-white p-6 pb-24 shadow-2xl z-20 transform -rotate-2"
                 >
-                  <img src={experienceImage('Hoàng hôn trên sông lam.jpg')} alt={t('Khoảnh khắc du khách')} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
-                  <div className="absolute bottom-8 left-8 right-8">
+                  <img src={experienceImage('Hoàng hôn trên sông lam.jpg')} alt={t('Khoảnh khắc du khách')} className="w-full h-full object-cover transition-all duration-700" />
+                  <div className="absolute bottom-8 right-8 max-w-[70%] text-right">
                     <p className="font-serif italic text-2xl text-gray-800">{t('"Hoàng hôn trên sông Lam, 2024"')}</p>
                   </div>
                 </motion.div>
@@ -357,7 +420,7 @@ export default function Experiences() {
                   <span className="text-red-600 font-bold tracking-[0.4em] uppercase text-[10px]">{t('Nhật ký hành trình')}</span>
                 </div>
                 <h2 className="text-5xl md:text-7xl font-bold font-serif leading-tight tracking-tighter text-gray-900">
-                  {t('Nghe')} <br /> <span className="text-red-600 italic">{t('người đi trước.')}</span>
+                  {t('Nghe')} <br /> <span className="text-red-600 italic">{t('người đi trước')}</span>
                 </h2>
                 <p className="text-gray-500 font-light leading-relaxed text-lg">
                   {t('Không phải lời khuyên từ chuyên gia, đây là những mảnh ghép cảm xúc thực tế từ những tâm hồn đã trót yêu mảnh đất này.')}
@@ -393,11 +456,11 @@ export default function Experiences() {
                     className="group flex space-x-6 items-start"
                   >
                     <div className="flex-shrink-0 w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg">
-                      <img src={story.avatar} alt={story.author} className="w-full h-full object-cover" />
+                      <img src={story.avatar} alt={t(story.author)} className="w-full h-full object-cover" />
                     </div>
                     <div className="space-y-3">
                       <div className="flex items-center space-x-3">
-                        <h4 className="font-bold text-gray-900">{story.author}</h4>
+                        <h4 className="font-bold text-gray-900">{t(story.author)}</h4>
                         <span className="text-[10px] uppercase tracking-widest text-red-600/50 font-bold">{t(story.role)}</span>
                       </div>
                       <p className="text-gray-600 font-serif italic leading-relaxed group-hover:text-gray-900 transition-colors">
@@ -439,7 +502,7 @@ export default function Experiences() {
             className="space-y-12"
           >
             <h2 className="text-6xl md:text-9xl font-bold text-white font-serif tracking-tighter leading-none">
-              {t('Viết nên')} <br /> <span className="text-red-600 italic">{t('câu chuyện')}</span> <br /> {t('của bạn.')}
+              {t('Viết nên')} <br /> <span className="text-red-600 italic">{t('câu chuyện')}</span> <br /> {t('của bạn')}
             </h2>
             <p className="text-gray-400 text-xl max-w-2xl mx-auto font-light leading-relaxed">
               {t('Mỗi bước chân tại Nghệ An là một trang mới trong cuốn nhật ký hành trình của cuộc đời bạn.')}

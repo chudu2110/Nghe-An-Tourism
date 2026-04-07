@@ -58,9 +58,9 @@ export default function Dictionary() {
   };
 
   return (
-    <div className="pt-24 overflow-hidden">
+    <div className="overflow-hidden">
       {/* Hero Section - More Editorial */}
-      <section className="relative bg-red-600 py-32 text-white overflow-hidden">
+      <section className="relative bg-red-600 pt-56 pb-32 text-white overflow-hidden">
         <motion.div 
           initial={{ opacity: 0, scale: 1.2 }}
           animate={{ opacity: 0.1, scale: 1 }}
@@ -81,8 +81,9 @@ export default function Dictionary() {
                 <Sparkles size={16} />
                 <span>{t('Khám phá phương ngữ xứ Nghệ')}</span>
               </div>
-              <h1 className="text-6xl md:text-8xl font-bold mb-8 tracking-tighter leading-none">
-                {t('Từ điển')} <span className="italic font-serif">"Nghệ"</span><br />{t('xứ Nghệ')}
+              <h1 className="text-6xl md:text-8xl font-bold mb-8 tracking-tighter leading-[1.08]">
+                {t('Từ điển')} <span className="italic font-serif">"Nghệ"</span>
+                <span className="block mt-3">{t('xứ Nghệ')}</span>
               </h1>
               <p className="text-xl text-red-100 max-w-xl mb-12 leading-relaxed">
                 {t('Tiếng Nghệ không chỉ là ngôn ngữ, đó là một phần tâm hồn của người dân nơi đây. Khám phá sự thú vị và ấm áp của phương ngữ xứ Nghệ.')}
@@ -215,7 +216,7 @@ export default function Dictionary() {
           >
             <h2 className="text-sm font-bold text-red-500 uppercase tracking-[0.3em] mb-12">{t('Tâm hồn xứ Nghệ')}</h2>
             <p className="text-3xl md:text-5xl font-serif italic leading-tight mb-12 text-gray-200">
-              {t('"Dù đi đâu xa, chỉ cần nghe một tiếng \'mô\', \'tê\' là lòng lại thấy ấm áp lạ kỳ, như được trở về với mái nhà thân thương."')}
+              {t('"Dù đi đâu xa, chỉ cần nghe một tiếng \'mô\', \'tê\' là lòng lại thấy ấm áp lạ kỳ, như được trở về với mái nhà thân thương"')}
             </p>
             <div className="w-24 h-1 bg-red-600 mx-auto rounded-full" />
           </motion.div>

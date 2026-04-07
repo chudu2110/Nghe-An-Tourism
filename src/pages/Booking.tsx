@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plane, Building2, Train, Car, Hotel, ArrowRight, Star, MapPin, ShieldCheck, Clock, CreditCard, Phone, Sparkles, Zap, Award } from 'lucide-react';
+import { Plane, Building2, Train, Car, Hotel, Bike, ArrowRight, Star, MapPin, ShieldCheck, Clock, CreditCard, Phone, Sparkles, Award } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Section from '../components/Section';
 import { useI18n } from '../i18n';
@@ -8,9 +8,13 @@ import { useI18n } from '../i18n';
 const planningImage = (fileName: string) =>
   new URL(`../../Planning img/${fileName}`, import.meta.url).href;
 
+const bookingImage = (fileName: string) =>
+  new URL(`../../Booking img/${fileName}`, import.meta.url).href;
+
 export const bookingCategories = [
   { id: 'hotels', icon: <Hotel />, label: 'Khách sạn', description: '3-5 sao sang trọng' },
   { id: 'homestays', icon: <Building2 />, label: 'Homestay', description: 'Trải nghiệm bản địa' },
+  { id: 'motorbikes', icon: <Bike />, label: 'Thuê xe máy', description: 'Linh hoạt & Tiết kiệm' },
   { id: 'cars', icon: <Car />, label: 'Thuê xe', description: 'Tự lái & Tài xế' },
   { id: 'transport', icon: <Train />, label: 'Di chuyển', description: 'Tàu hỏa & Máy bay' },
 ];
@@ -25,6 +29,11 @@ export const services = {
     { id: 4, name: 'Hồng Sơn Homestay', location: 'Con Cuông', price: '350.000đ', rating: 4.7, image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=800', tags: ['Nhà sàn', 'Pù Mát'] },
     { id: 5, name: 'Làng Sen Homestay', location: 'Nam Đàn', price: '400.000đ', rating: 4.6, image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800', tags: ['Yên tĩnh', 'Cánh đồng'] },
   ],
+  motorbikes: [
+    { id: 10, name: 'Honda ICON e', location: 'TP Vinh', price: '180.000đ/ngày', rating: 4.8, image: bookingImage('Honda ICON e.webp'), tags: ['Xe điện', 'Tiết kiệm'] },
+    { id: 11, name: 'Cub 87 Saphia Pro', location: 'TP Vinh', price: '150.000đ/ngày', rating: 4.7, image: bookingImage('Cub 87 Saphia Pro.jpg'), tags: ['Xe số', 'Tiết kiệm'] },
+    { id: 12, name: 'Wave 50cc', location: 'TP Vinh', price: '120.000đ/ngày', rating: 4.6, image: bookingImage('Wave 50cc.jpg'), tags: ['Xe số', 'Tiết kiệm'] },
+  ],
   cars: [
     { id: 6, name: 'Toyota Fortuner 2023', location: 'TP Vinh', price: '1.200.000đ/ngày', rating: 4.9, image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=800', tags: ['7 Chỗ', 'Tự lái'] },
     { id: 7, name: 'Hyundai Accent 2022', location: 'TP Vinh', price: '800.000đ/ngày', rating: 4.8, image: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=800', tags: ['5 Chỗ', 'Tiết kiệm'] },
@@ -37,7 +46,7 @@ export const services = {
 
 export default function Booking() {
   const [activeCategory, setActiveCategory] = useState('hotels');
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -82,10 +91,10 @@ export default function Booking() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-7xl md:text-[12vw] font-bold text-gray-900 mb-12 font-serif leading-[0.85] tracking-tighter uppercase"
+            className={`text-5xl md:text-[10vw] font-bold text-gray-900 mb-12 font-serif ${lang === 'vi' ? 'leading-[1.2]' : 'leading-[1.0]'} tracking-tighter uppercase`}
           >
             {t('Hành trình')} <br /> 
-            <span className="italic text-red-600">{t('Hoàn hảo.')}</span>
+            <span className="italic text-red-600">{t('Hoàn hảo')}</span>
           </motion.h1>
 
           <motion.div
@@ -125,6 +134,12 @@ export default function Booking() {
       {/* SECTION 2: BOOKING PROCESS (Recipe 5 Style) */}
       <section className="py-24 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 flex items-center justify-between gap-8">
+            <h2 className="text-4xl md:text-5xl font-bold font-serif tracking-tighter text-gray-900">
+              {t('Cách đặt dịch vụ?')}
+            </h2>
+            <div className="hidden md:block h-px flex-1 bg-gray-100" />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-0 border border-gray-900">
             {[
               { step: '01', title: t('Tìm kiếm'), desc: t('Lựa chọn dịch vụ phù hợp với nhu cầu của bạn.') },
@@ -150,7 +165,7 @@ export default function Booking() {
             {/* Sidebar Tabs - Vertical Rail Style */}
             <div className="lg:w-1/4">
               <div className="sticky top-32 space-y-4">
-                <h2 className="text-3xl font-bold font-serif mb-10">{t('Danh mục.')}</h2>
+                <h2 className="text-3xl font-bold font-serif mb-10">{t('Danh mục')}</h2>
                 <div className="flex flex-col space-y-2">
                   {bookingCategories.map((cat) => (
                     <button
@@ -214,7 +229,7 @@ export default function Booking() {
                         <img
                           src={item.image}
                           alt={item.name}
-                          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0"
+                          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                           referrerPolicy="no-referrer"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -262,7 +277,7 @@ export default function Booking() {
       <section className="py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-24">
-            <h2 className="text-5xl font-bold font-serif mb-6">{t('Cam kết dịch vụ.')}</h2>
+            <h2 className="text-5xl font-bold font-serif mb-6">{t('Cam kết dịch vụ')}</h2>
             <p className="text-gray-500 max-w-xl mx-auto font-light">{t('Chúng tôi kết nối bạn với những đối tác uy tín nhất để đảm bảo mỗi chuyến đi đều là một kỷ niệm đẹp.')}</p>
           </div>
 
@@ -339,14 +354,10 @@ export default function Booking() {
                 <img 
                   src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=1200" 
                   alt={t('Trải nghiệm du lịch')}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+                  className="w-full h-full object-cover transition-all duration-1000"
                   referrerPolicy="no-referrer"
                 />
               </motion.div>
-              {/* Floating Badge */}
-              <div className="absolute -top-10 -right-10 bg-white p-8 rounded-full shadow-2xl animate-bounce">
-                <Zap className="text-red-600" size={32} />
-              </div>
             </div>
           </div>
         </div>

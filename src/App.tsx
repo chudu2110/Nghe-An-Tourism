@@ -8,6 +8,10 @@ import Experiences from './pages/Experiences';
 import FoodCulture from './pages/FoodCulture';
 import Planning from './pages/Planning';
 import Blog from './pages/Blog';
+import BlogSupLuonXuNghe from './pages/BlogSupLuonXuNghe';
+import BlogBienCuaLoHoiThoKyUc from './pages/BlogBienCuaLoHoiThoKyUc';
+import BlogNhungQuanCaHeHidden from './pages/BlogNhungQuanCaHeHidden';
+import BlogNgonNguQueHuongTiengDatMe from './pages/BlogNgonNguQueHuongTiengDatMe';
 import Booking from './pages/Booking';
 import Map from './pages/Map';
 import Dictionary from './pages/Dictionary';
@@ -16,6 +20,7 @@ import About from './pages/About';
 import Volunteers from './pages/Volunteers';
 import LuckyWheel from './pages/LuckyWheel';
 import Assistant from './pages/Assistant';
+import Podcast from './pages/Podcast';
 
 function ScrollToTop() {
   const { pathname, search, hash } = useLocation();
@@ -62,6 +67,11 @@ export default function App() {
             <Route path="/food-culture" element={<FoodCulture />} />
             <Route path="/planning" element={<Planning />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/sup-luon-xu-nghe" element={<BlogSupLuonXuNghe />} />
+            <Route path="/blog/bien-cua-lo-hoi-tho-ky-uc" element={<BlogBienCuaLoHoiThoKyUc />} />
+            <Route path="/blog/nhung-quan-ca-he-hidden" element={<BlogNhungQuanCaHeHidden />} />
+            <Route path="/blog/ngon-ngu-que-huong-tieng-dat-me" element={<BlogNgonNguQueHuongTiengDatMe />} />
+            <Route path="/podcast" element={<Podcast />} />
             <Route path="/booking" element={<Booking />} />
             <Route path="/map" element={<Map />} />
             <Route path="/dictionary" element={<Dictionary />} />

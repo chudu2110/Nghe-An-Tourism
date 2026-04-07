@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { Search, Calendar, User, Tag, ArrowRight, Bookmark, Filter, ChevronRight, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n';
 
 const blogImage = (fileName: string) =>
@@ -8,7 +9,22 @@ const blogImage = (fileName: string) =>
 
 const categories = ['Tất cả', 'Kinh nghiệm', 'Ẩm thực', 'Văn hóa', 'Hành trình', 'Cảm hứng'];
 
-const blogPosts = [
+type BlogPost = {
+  id: number;
+  title: string;
+  subtitle: string;
+  category: string;
+  author: string;
+  date: string;
+  readTime: string;
+  image: string;
+  description: string;
+  featured?: boolean;
+  link?: string;
+  path?: string;
+};
+
+const blogPosts: BlogPost[] = [
   {
     id: 1,
     title: 'Bình minh trên Đảo Chè: Bản giao hưởng của sương và nắng',
@@ -32,7 +48,7 @@ const blogPosts = [
     readTime: '5 phút',
     image: blogImage('súp lươn xứ nghệ.jpg'),
     description: 'Khám phá bí mật đằng sau món ăn làm nên tên tuổi của ẩm thực thành Vinh, từ cách chọn lươn đến sự kết hợp tinh tế của gia vị.',
-    link: 'https://vinpearl.com/vi/sup-luon-nghe-an-mot-trong-7-mon-an-doc-dao-nhat-the-gioi'
+    path: '/blog/sup-luon-xu-nghe'
   },
   {
     id: 3,
@@ -69,6 +85,42 @@ const blogPosts = [
     image: blogImage('hoa hướng dương nghĩa đàn.webp'),
     description: 'Khi hàng triệu đóa hướng dương cùng khoe sắc dưới ánh nắng miền Trung, đó là lúc Nghĩa Đàn trở thành thiên đường cho những tâm hồn yêu cái đẹp.',
     link: 'https://vinpearl.com/vi/ghe-tham-canh-dong-hoa-huong-duong-nghe-an-diem-check-in-tuyet-dep'
+  },
+  {
+    id: 6,
+    title: 'Biển Cửa Lò – hơi thở của ký ức',
+    subtitle: 'Cảm hứng',
+    category: 'Cảm hứng',
+    author: 'Nghệ An Discovery',
+    date: '18 Th03, 2024',
+    readTime: '6 phút',
+    image: blogImage('Biển Cửa Lò, hơi thở ký ức.jpg'),
+    description: 'Biển Cửa Lò không chỉ là cảnh vật, mà là cảm xúc và ký ức — nơi nhịp sóng và gió biển ôm trọn những điều giản đơn nhưng da diết.',
+    path: '/blog/bien-cua-lo-hoi-tho-ky-uc'
+  },
+  {
+    id: 7,
+    title: 'Những quán “cà-hê” hidden',
+    subtitle: 'Cảm hứng',
+    category: 'Cảm hứng',
+    author: 'Nghệ An Discovery',
+    date: '20 Th03, 2024',
+    readTime: '6 phút',
+    image: blogImage('Những quán cà hê hidden.jpg'),
+    description: 'Những khoảng lặng có hình hài trong các con ngõ nhỏ — nơi mỗi tách “cà-hê” mang theo ký ức, cảm xúc và sự bình yên giữa lòng thành phố.',
+    path: '/blog/nhung-quan-ca-he-hidden'
+  },
+  {
+    id: 8,
+    title: 'Ngôn ngữ quê hương - tiếng đất mẹ',
+    subtitle: 'Văn hóa',
+    category: 'Văn hóa',
+    author: 'Nghệ An Discovery',
+    date: '22 Th03, 2024',
+    readTime: '6 phút',
+    image: blogImage('ngôn ngữ quê hương- tiếng đất mẹ.jpg'),
+    description: 'Giọng Nghệ mộc mạc như đất cát miền Trung — nơi ngôn ngữ không chỉ để nói, mà để nhớ, để thuộc về, và để giữ quê hương ở thật gần.',
+    path: '/blog/ngon-ngu-que-huong-tieng-dat-me'
   }
 ];
 
@@ -76,7 +128,19 @@ export default function Blog() {
   const [activeCategory, setActiveCategory] = useState('Tất cả');
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const navigate = useNavigate();
+
+  const openPost = (post: BlogPost) => {
+    if (post.path) {
+      navigate(post.path);
+      return;
+    }
+
+    if (post.link) {
+      window.open(post.link, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   const filteredPosts = activeCategory === 'Tất cả' 
     ? blogPosts 
@@ -85,7 +149,7 @@ export default function Blog() {
   const featuredPost = blogPosts.find(p => p.featured);
 
   return (
-    <div className="pt-20 bg-[#fdfcf9] min-h-screen">
+    <div key={lang} className="pt-20 bg-[#fdfcf9] min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[70vh] flex items-center justify-center overflow-hidden bg-gray-950">
         <motion.div style={{ y }} className="absolute inset-0 z-0 opacity-40">
@@ -102,7 +166,7 @@ export default function Blog() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
+            className="space-y-4 -translate-y-10 md:-translate-y-14"
           >
             <div className="flex items-center justify-center space-x-4">
               <div className="h-px w-12 bg-red-600" />
@@ -110,12 +174,12 @@ export default function Blog() {
               <div className="h-px w-12 bg-red-600" />
             </div>
             
-            <h1 className="text-7xl md:text-[10rem] font-bold text-white leading-[0.8] tracking-tighter font-serif">
+            <h1 className={`text-4xl md:text-[7.5rem] font-bold text-white ${lang === 'vi' ? 'leading-[1.15]' : 'leading-[1.05]'} tracking-tighter font-serif`}>
               {t('Nhật')} <br />
-              <span className="italic text-red-600">{t('ký.')}</span>
+              <span className="italic text-red-600">{t('ký')}</span>
             </h1>
             
-            <p className="text-gray-400 text-xl max-w-2xl mx-auto font-light leading-relaxed">
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light leading-relaxed">
               {t('Những câu chuyện, kinh nghiệm và cảm hứng cho hành trình của bạn tại mảnh đất Nghệ An.')}
             </p>
           </motion.div>
@@ -131,13 +195,16 @@ export default function Blog() {
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="bg-white rounded-sm shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2"
+            onClick={() => openPost(featuredPost)}
+            className="bg-white rounded-sm shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 cursor-pointer group"
           >
-            <div className="relative aspect-video lg:aspect-auto overflow-hidden">
+            <div 
+              className="relative aspect-video lg:aspect-auto overflow-hidden"
+            >
               <img 
                 src={featuredPost.image} 
-                alt={featuredPost.title} 
-                className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000" 
+                alt={t(featuredPost.title)} 
+                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000" 
               />
               <div className="absolute top-8 left-8 bg-red-600 text-white px-4 py-1 text-[10px] font-bold uppercase tracking-widest">
                 {t('Tiêu điểm')}
@@ -146,7 +213,9 @@ export default function Blog() {
             <div className="p-12 lg:p-20 flex flex-col justify-center space-y-8">
               <div className="space-y-2">
                 <p className="text-red-600 font-bold text-[10px] uppercase tracking-[0.3em]">{t(featuredPost.subtitle)}</p>
-                <h2 className="text-4xl md:text-5xl font-bold font-serif leading-tight text-gray-900 tracking-tighter">
+                <h2 
+                  className="text-4xl md:text-5xl font-bold font-serif leading-tight text-gray-900 tracking-tighter group-hover:text-red-600 transition-colors"
+                >
                   {t(featuredPost.title)}
                 </h2>
               </div>
@@ -159,17 +228,16 @@ export default function Blog() {
                     <User size={18} className="text-gray-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-gray-900">{featuredPost.author}</p>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-widest">{featuredPost.date}</p>
+                    <p className="text-xs font-bold text-gray-900">{t(featuredPost.author)}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-widest">{t(featuredPost.date)}</p>
                   </div>
                 </div>
-                <button 
-                  onClick={() => featuredPost.link && window.open(featuredPost.link, '_blank', 'noopener,noreferrer')}
-                  className="flex items-center space-x-3 text-gray-900 font-bold uppercase tracking-widest text-[10px] group"
+                <div
+                  className="flex items-center space-x-3 text-gray-900 font-bold uppercase tracking-widest text-[10px]"
                 >
                   <span>{t('Đọc tiếp')}</span>
                   <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform text-red-600" />
-                </button>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -215,14 +283,14 @@ export default function Blog() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              onClick={() => post.link && window.open(post.link, '_blank', 'noopener,noreferrer')}
+              onClick={() => openPost(post)}
               className="group cursor-pointer"
             >
               <div className="aspect-[4/3] overflow-hidden rounded-sm mb-8 relative">
                 <img 
                   src={post.image} 
-                  alt={post.title} 
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 grayscale group-hover:grayscale-0" 
+                  alt={t(post.title)} 
+                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000" 
                 />
                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button className="w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 hover:text-red-600 transition-colors">
@@ -240,11 +308,11 @@ export default function Blog() {
                 <div className="flex items-center space-x-4 text-[10px] text-gray-400 uppercase tracking-widest font-bold">
                   <div className="flex items-center space-x-1">
                     <Calendar size={12} />
-                    <span>{post.date}</span>
+                    <span>{t(post.date)}</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Clock size={12} />
-                    <span>{post.readTime}</span>
+                    <span>{t(post.readTime)}</span>
                   </div>
                 </div>
                 
@@ -273,7 +341,7 @@ export default function Blog() {
             <img 
               src={blogImage('khoảnh khắc 02.jpg')} 
               alt="Newsletter BG" 
-              className="w-full h-full object-cover grayscale" 
+              className="w-full h-full object-cover" 
             />
             <div className="absolute inset-0 bg-gradient-to-l from-gray-950 to-transparent" />
           </div>
@@ -284,7 +352,7 @@ export default function Blog() {
               <span className="text-red-600 font-bold tracking-[0.4em] uppercase text-[10px]">{t('Đăng ký bản tin')}</span>
             </div>
             <h2 className="text-4xl md:text-6xl font-bold text-white font-serif tracking-tighter leading-tight">
-              {t('Nhận cảm hứng')} <br /> <span className="text-red-600 italic">{t('mỗi tuần.')}</span>
+              {t('Nhận cảm hứng')} <br /> <span className="text-red-600 italic">{t('mỗi tuần')}</span>
             </h2>
             <p className="text-gray-400 font-light leading-relaxed">
               {t('Đăng ký để nhận những câu chuyện du lịch mới nhất, kinh nghiệm độc quyền và ưu đãi hành trình từ Nghệ An Discovery.')}
@@ -325,7 +393,7 @@ export default function Blog() {
               <motion.div
                 key={src}
                 whileHover={{ scale: 1.05, rotate: i % 2 === 0 ? 2 : -2 }}
-                className="aspect-square overflow-hidden rounded-sm cursor-pointer grayscale hover:grayscale-0 transition-all duration-500"
+                className="aspect-square overflow-hidden rounded-sm cursor-pointer transition-all duration-500"
               >
                 <img 
                   src={src} 
