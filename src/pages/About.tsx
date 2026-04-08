@@ -26,52 +26,66 @@ export default function About() {
     },
     {
       id: '02',
-      title: 'Trải Nghiệm',
-      path: '/experiences',
-      desc: 'Săn mây đại ngàn, chèo thuyền trên sông Lam và văn hóa bản địa.',
-      img: aboutImage('Trải nghiệm.webp')
-    },
-    {
-      id: '03',
-      title: 'Ẩm thực & Văn hóa',
-      path: '/food-culture',
-      desc: 'Hương vị đặc sản và chiều sâu văn hóa trong từng câu chuyện Xứ Nghệ.',
-      img: aboutImage('Ẩm thực.jpg')
-    },
-    {
-      id: '04',
-      title: 'Đặt Chỗ',
-      path: '/booking',
-      desc: 'Dịch vụ đặt phòng, tour và vé tham quan nhanh chóng, an toàn.',
-      img: aboutImage('Đặt chỗ.jpg')
-    },
-    {
-      id: '05',
-      title: 'Tình Nguyện',
-      path: '/volunteers',
-      desc: 'Tham gia bảo tồn thiên nhiên và hỗ trợ phát triển cộng đồng.',
-      img: aboutImage('tình nguyện.jpg')
-    },
-    {
-      id: '06',
-      title: 'Kế Hoạch',
-      path: '/planning',
-      desc: 'Công cụ thiết kế hành trình hoàn hảo theo từng mùa và sở thích.',
-      img: aboutImage('Kế hoạch.jpg')
-    },
-    {
-      id: '07',
       title: 'Bản Đồ',
       path: '/map',
       desc: 'Dẫn lối bạn đến những góc nhỏ chưa tên.',
       img: aboutImage('Bản đồ.jpg')
     },
     {
-      id: '08',
+      id: '03',
       title: 'Từ Điển',
       path: '/dictionary',
       desc: 'Giải mã những từ ngữ địa phương đặc trưng của người Xứ Nghệ.',
       img: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=1200'
+    },
+    {
+      id: '04',
+      title: 'Trải Nghiệm',
+      path: '/experiences',
+      desc: 'Săn mây đại ngàn, chèo thuyền trên sông Lam và văn hóa bản địa.',
+      img: aboutImage('Trải nghiệm.webp')
+    },
+    {
+      id: '05',
+      title: 'Ẩm thực & Văn hóa',
+      path: '/food-culture',
+      desc: 'Hương vị đặc sản và chiều sâu văn hóa trong từng câu chuyện Xứ Nghệ.',
+      img: aboutImage('Ẩm thực.jpg')
+    },
+    {
+      id: '06',
+      title: 'Đặt chỗ',
+      path: '/booking',
+      desc: 'Dịch vụ đặt phòng, tour và vé tham quan nhanh chóng, an toàn.',
+      img: aboutImage('Đặt chỗ.jpg')
+    },
+    {
+      id: '07',
+      title: 'Tình Nguyện',
+      path: '/volunteers',
+      desc: 'Tham gia bảo tồn thiên nhiên và hỗ trợ phát triển cộng đồng.',
+      img: aboutImage('tình nguyện.jpg')
+    },
+    {
+      id: '08',
+      title: 'Kế Hoạch',
+      path: '/planning',
+      desc: 'Công cụ thiết kế hành trình hoàn hảo theo từng mùa và sở thích.',
+      img: aboutImage('Kế hoạch.jpg')
+    },
+    {
+      id: '09',
+      title: 'Blog',
+      path: '/blog',
+      desc: 'Những câu chuyện, kinh nghiệm và cảm hứng cho hành trình của bạn tại mảnh đất Nghệ An.',
+      img: aboutImage('Blog.jpg')
+    },
+    {
+      id: '10',
+      title: 'Podcast',
+      path: '/podcast',
+      desc: 'Câu chuyện đặc trưng, ấm áp và chân tình của người dân xứ Nghệ.',
+      img: aboutImage('Podcast.webp')
     }
   ];
 
@@ -114,8 +128,8 @@ export default function About() {
                   style={{ y: heroTextY }}
                   className={`text-5xl md:text-[8.5vw] font-serif italic ${lang === 'vi' ? 'leading-[1.2]' : 'leading-[1.0]'} tracking-tighter text-[#1a1a1a]`}
                 >
-                  {t('Hệ sinh thái')} <br />
-                  <span className="text-red-600">{t('Du lịch số')}</span>
+                  <span className="font-bold tracking-[0.02em]">{t('Hệ sinh thái')}</span> <br />
+                  <span className="text-red-600 font-bold tracking-[0.02em]">{t('Du lịch số')}</span>
                 </motion.h1>
               </motion.div>
             </div>
@@ -249,7 +263,7 @@ export default function About() {
                     transition={{ duration: 0.5, delay: i * 0.06 }}
                     className="space-y-4 border-l-2 border-gray-100 pl-8 hover:border-red-600 transition-colors"
                   >
-                    <h4 className="text-xl font-serif italic">{t(val.title)}</h4>
+                    <h4 className="text-xl font-serif italic font-bold">{t(val.title)}</h4>
                     <p className="text-gray-500 font-light leading-relaxed text-sm">{t(val.desc)}</p>
                   </motion.div>
                 ))}

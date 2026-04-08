@@ -7,3 +7,4 @@ coverage/
 .env*
 !.env.example
 netlify-deploy.zip
+netlify-dist.zip

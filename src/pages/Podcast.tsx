@@ -44,7 +44,7 @@ const episodesEn: PodcastEpisode[] = [
     description: 'Hành trình âm thanh đưa bạn sâu vào lõi rừng quốc gia Pù Mát, nơi những loài thú quý hiếm và thảm thực vật nguyên sinh vẫn đang được bảo tồn.',
     duration: '10:45',
     date: '12/04/2026',
-    category: 'Thiên nhiên',
+    category: 'Con người',
     image: blogImage('Tiếng mẹ đẻ 03.jpg'),
     mediaType: 'video',
     videoUrl: podcastVideo('Ep1.mp4')
@@ -55,7 +55,7 @@ const episodesEn: PodcastEpisode[] = [
     description: 'Tìm hiểu về nguồn gốc và những bí quyết gia truyền tạo nên món súp lươn cay nồng, biểu tượng ẩm thực không thể trộn lẫn của người dân Nghệ An.',
     duration: '08:12',
     date: '05/04/2026',
-    category: 'Ẩm thực',
+    category: 'Thiên nhiên',
     image: blogImage('Cửa Lò 03.jpg'),
     mediaType: 'video',
     videoUrl: podcastVideo('Ep2.mp4')
@@ -66,7 +66,7 @@ const episodesEn: PodcastEpisode[] = [
     description: 'Cuộc trò chuyện với các nghệ nhân dân gian về sức sống của Dân ca Ví, Giặm trong đời sống hiện đại và nỗ lực đưa di sản vươn tầm thế giới.',
     duration: '09:58',
     date: '28/03/2026',
-    category: 'Văn hóa',
+    category: 'Ẩm thực',
     image: blogImage('súp lươn xứ nghệ.jpg'),
     mediaType: 'video',
     videoUrl: podcastVideo('Ep3.mp4')
@@ -77,7 +77,7 @@ const episodesEn: PodcastEpisode[] = [
     description: 'Ghé thăm làng sen quê Bác và những làng nghề truyền thống đang hồi sinh mạnh mẽ nhờ sự kết hợp giữa thủ công và tư duy du lịch mới.',
     duration: '41:10',
     date: '20/03/2026',
-    category: 'Con người',
+    category: 'Văn hóa',
     image: blogImage('Tiếng mẹ đẻ 02.jpg'),
     mediaType: 'video',
     videoUrl: podcastVideo('Ep4.mp4')
@@ -87,44 +87,44 @@ const episodesEn: PodcastEpisode[] = [
 const episodesVi: PodcastEpisode[] = [
   {
     id: '1',
-    title: 'Tập 1: ( VietNamese ver) Một ngày làm người Nghệ – sống chậm giữa gió Lào',
+    title: 'Tập 1: Một ngày làm người Nghệ – sống chậm giữa gió Lào',
     description: 'Hành trình âm thanh đưa bạn sâu vào lõi rừng quốc gia Pù Mát, nơi những loài thú quý hiếm và thảm thực vật nguyên sinh vẫn đang được bảo tồn.',
     duration: '10:45',
     date: '12/04/2026',
-    category: 'Thiên nhiên',
+    category: 'Con người',
     image: blogImage('Tiếng mẹ đẻ 03.jpg'),
     mediaType: 'video',
     videoUrl: podcastVideo('Ep1 VN.mp4')
   },
   {
     id: '2',
-    title: 'Tập 2: (VietNamese ver) Biển không chỉ để tắm – câu chuyện phía sau Cửa Lò',
+    title: 'Tập 2: Biển không chỉ để tắm – câu chuyện phía sau Cửa Lò',
     description: 'Tìm hiểu về nguồn gốc và những bí quyết gia truyền tạo nên món súp lươn cay nồng, biểu tượng ẩm thực không thể trộn lẫn của người dân Nghệ An.',
     duration: '08:12',
     date: '05/04/2026',
-    category: 'Ẩm thực',
+    category: 'Thiên nhiên',
     image: blogImage('Cửa Lò 03.jpg'),
     mediaType: 'video',
     videoUrl: podcastVideo('Ep2 VN.mp4')
   },
   {
     id: '3',
-    title: 'Tập 3: (VietNamese ver) Bạn nghĩ mình đã thử súp lươn Nghệ An? Có thể… chưa đâu',
+    title: 'Tập 3: Bạn nghĩ mình đã thử súp lươn Nghệ An? Có thể… chưa đâu',
     description: 'Cuộc trò chuyện với các nghệ nhân dân gian về sức sống của Dân ca Ví, Giặm trong đời sống hiện đại và nỗ lực đưa di sản vươn tầm thế giới.',
     duration: '09:58',
     date: '28/03/2026',
-    category: 'Văn hóa',
+    category: 'Ẩm thực',
     image: blogImage('súp lươn xứ nghệ.jpg'),
     mediaType: 'video',
     videoUrl: podcastVideo('Ep3 VN.mp4')
   },
   {
     id: '4',
-    title: 'Tập 4: (Vietnamese ver ) Nhịp sống trên thuyền - Đời ngư dân xứ Nghệ',
+    title: 'Tập 4: Nhịp sống trên thuyền - Đời ngư dân xứ Nghệ',
     description: 'Ghé thăm làng sen quê Bác và những làng nghề truyền thống đang hồi sinh mạnh mẽ nhờ sự kết hợp giữa thủ công và tư duy du lịch mới.',
     duration: '41:10',
     date: '20/03/2026',
-    category: 'Con người',
+    category: 'Văn hóa',
     image: blogImage('Tiếng mẹ đẻ 02.jpg'),
     mediaType: 'video',
     videoUrl: podcastVideo('Ep4 VN.mp4')
@@ -139,7 +139,7 @@ export default function Podcast() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState('0:00');
-  const [displayDuration, setDisplayDuration] = useState(() => episodes[0].duration);
+  const [displayDuration, setDisplayDuration] = useState('--:--');
   const [durationsById, setDurationsById] = useState<Record<string, string>>({});
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [showPlayer, setShowPlayer] = useState(false);
@@ -185,14 +185,80 @@ export default function Podcast() {
     setIsPlaying(false);
     setIsLoading(false);
     setShowPlayer(false);
+    setDurationsById({});
+    setDisplayDuration('--:--');
     setActiveEpisode(prev => episodes.find(e => e.id === prev.id) ?? episodes[0]);
   }, [lang]);
 
   useEffect(() => {
     setProgress(0);
     setCurrentTime('0:00');
-    setDisplayDuration(episodes.find(e => e.id === activeEpisode.id)?.duration ?? activeEpisode.duration);
-  }, [activeEpisode.id]);
+    setDisplayDuration(durationsById[activeEpisode.id] ?? '--:--');
+  }, [activeEpisode.id, durationsById]);
+
+  useEffect(() => {
+    if (isPlaying) return;
+    const video = videoRef.current;
+    if (!video || !activeEpisode.videoUrl) return;
+    video.load();
+  }, [activeEpisode.id, activeEpisode.videoUrl, isPlaying]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadOne = (ep: PodcastEpisode) =>
+      new Promise<void>((resolve) => {
+        if (!ep.videoUrl) {
+          resolve();
+          return;
+        }
+
+        const tempVideo = document.createElement('video');
+        tempVideo.preload = 'metadata';
+        tempVideo.muted = true;
+        tempVideo.playsInline = true;
+
+        const cleanup = () => {
+          tempVideo.removeAttribute('src');
+          tempVideo.load();
+          resolve();
+        };
+
+        tempVideo.onloadedmetadata = () => {
+          if (cancelled) {
+            cleanup();
+            return;
+          }
+
+          const duration = tempVideo.duration;
+          if (Number.isFinite(duration) && duration > 0) {
+            const formatted = formatTime(duration);
+            setDurationsById(prev => (prev[ep.id] === formatted ? prev : { ...prev, [ep.id]: formatted }));
+
+            if (activeEpisodeRef.current.id === ep.id) {
+              setDisplayDuration(formatted);
+            }
+          }
+
+          cleanup();
+        };
+
+        tempVideo.onerror = cleanup;
+        tempVideo.src = ep.videoUrl;
+        tempVideo.load();
+      });
+
+    (async () => {
+      for (const ep of episodes) {
+        if (cancelled) return;
+        await loadOne(ep);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [lang]);
 
   const togglePlay = (ep?: PodcastEpisode) => {
     const nextEpisode = ep ?? activeEpisode;
@@ -213,6 +279,7 @@ export default function Podcast() {
       video.src = nextEpisode.videoUrl;
       video.currentTime = 0;
       video.volume = volume / 100;
+      video.load();
       video.play().catch(() => setIsLoading(false));
       return;
     }
@@ -349,14 +416,14 @@ export default function Podcast() {
           
           <div className="flex-grow space-y-6">
             <span className="block text-[10px] font-black tracking-[0.3em] uppercase text-red-500 mb-4">Podcast Series</span>
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-none text-black">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter leading-none text-black font-serif">
               {lang === 'vi' ? (
                 <>
-                  Âm thanh <br /> <span className="text-red-500">Xứ Nghệ.</span>
+                  Âm thanh <br /> <span className="text-red-500 italic">Xứ Nghệ</span>
                 </>
               ) : (
                 <>
-                  Sounds of <br /> <span className="text-red-500">Nghe An.</span>
+                  Sounds of <br /> <span className="text-red-500 italic">Nghe An</span>
                 </>
               )}
             </h1>
@@ -477,7 +544,7 @@ export default function Podcast() {
                 </div>
 
                 <div className="flex items-center justify-end text-xs text-gray-400 font-medium">
-                  {durationsById[ep.id] ?? ep.duration}
+                  {durationsById[ep.id] ?? '--:--'}
                 </div>
               </motion.div>
             ))}

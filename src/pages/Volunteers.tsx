@@ -98,8 +98,13 @@ export default function Volunteers() {
             <p className={`max-w-md text-xl font-light leading-relaxed ${viewMode === 'join' ? 'text-white/90' : 'text-gray-400'}`}>
               {t('Trở thành cầu nối văn hóa giữa Xứ Nghệ và thế giới. Chúng tôi đang tìm kiếm những trái tim nhiệt huyết.')}
             </p>
-            <div className={`w-24 h-24 rounded-full border flex items-center justify-center transition-all duration-700 group-hover:scale-110 group-hover:rotate-12 ${viewMode === 'join' ? 'border-white text-white' : 'border-red-600 text-red-600'}`}>
-              <UserPlus size={40} strokeWidth={1} />
+            <div
+              className={`w-28 h-28 md:w-32 md:h-32 rounded-full border-2 flex items-center justify-center transition-all duration-700 group-hover:scale-110 group-hover:rotate-12 ${viewMode === 'join'
+                ? 'border-white text-white bg-white/15 shadow-2xl shadow-black/40 ring-1 ring-white/30'
+                : 'border-red-600 text-red-600 bg-red-600/10 shadow-2xl shadow-red-600/20 ring-1 ring-red-600/30'
+              }`}
+            >
+              <UserPlus size={48} strokeWidth={1.5} />
             </div>
           </div>
         </div>
@@ -121,8 +126,13 @@ export default function Volunteers() {
             <p className={`max-w-md text-xl font-light leading-relaxed ${viewMode === 'find' ? 'text-black/70' : 'text-gray-400'}`}>
               {t('Tìm kiếm sự hỗ trợ từ những người am hiểu địa phương nhất. Hoàn toàn miễn phí và tận tâm.')}
             </p>
-            <div className={`w-24 h-24 rounded-full border flex items-center justify-center transition-all duration-700 group-hover:scale-110 group-hover:-rotate-12 ${viewMode === 'find' ? 'border-black text-black' : 'border-red-600 text-red-600'}`}>
-              <Search size={40} strokeWidth={1} />
+            <div
+              className={`w-28 h-28 md:w-32 md:h-32 rounded-full border-2 flex items-center justify-center transition-all duration-700 group-hover:scale-110 group-hover:-rotate-12 ${viewMode === 'find'
+                ? 'border-black text-black bg-black/5 shadow-2xl shadow-black/20 ring-1 ring-black/20'
+                : 'border-red-600 text-red-600 bg-red-600/10 shadow-2xl shadow-red-600/20 ring-1 ring-red-600/30'
+              }`}
+            >
+              <Search size={48} strokeWidth={1.5} />
             </div>
           </div>
         </div>

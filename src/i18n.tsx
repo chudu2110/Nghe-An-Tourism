@@ -35,6 +35,8 @@ const en: Translations = {
   'Tìm hiểu thêm về lịch sử': 'Learn more about history',
   'Giọng nói đặc trưng, ấm áp và chân tình của người dân xứ Nghệ.':
     'The distinctive, warm, and sincere voice of the people of Nghe An.',
+  'Câu chuyện đặc trưng, ấm áp và chân tình của người dân xứ Nghệ.':
+    'The distinctive, warm, and sincere stories of the people of Nghe An.',
   'Điểm đến nổi bật': 'Featured destinations',
   'Những nơi bạn không thể bỏ qua': "Places you shouldn't miss",
   'Khám phá': 'Explore',
@@ -93,7 +95,7 @@ const en: Translations = {
   'Kế Hoạch': 'Planning',
   'Bản Đồ': 'Map',
   'Từ Điển': 'Dictionary',
-  'Đặt Chỗ': 'Accomodations',
+  'Đặt Chỗ': 'Accommodations',
   'Tình Nguyện': 'Volunteering',
   'Cẩm nang cổng thông tin': 'The Portal Guide',
   'Hệ sinh thái': 'Ecosystem',
@@ -850,7 +852,7 @@ const en: Translations = {
   'Kết nối với những người con xứ Nghệ am hiểu văn hóa, lịch sử để chuyến đi thêm phần ý nghĩa.':
     'Connect with Nghe An locals who know the culture and history to make your trip more meaningful.',
   'Dịch vụ Guide': 'Guide service',
-  'Trải nghiệm đặt dịch vụ cao cấp': 'Premium Accomodations Experience',
+  'Trải nghiệm đặt dịch vụ cao cấp': 'Premium Accommodations Experience',
   'Cách đặt dịch vụ?': 'How to book?',
   'ĐẶT': 'BOOK',
   'DỊCH VỤ NGHE AN TRAVEL • 2026': 'NGHE AN TRAVEL SERVICES • 2026',
