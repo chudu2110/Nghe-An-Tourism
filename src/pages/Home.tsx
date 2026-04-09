@@ -481,36 +481,26 @@ export default function Home() {
     const target = e.target as HTMLElement | null;
     if (target?.closest('[data-hero-control]')) return;
     if (target?.closest('[data-hero-ui]')) return;
+
+    // Block interaction if it's not a simple left click or touch
+    if (e.button !== 0 && e.pointerType === 'mouse') {
+      e.preventDefault();
+      return;
+    }
+
     if (!hasHeroAudioGesture) setHasHeroAudioGesture(true);
     void tryEnableHeroVideoSound();
-    const el = heroRef.current;
-    if (!el) return;
-    el.setPointerCapture(e.pointerId);
-    heroDragRef.current = {
-      pointerId: e.pointerId,
-      startX: e.clientX,
-      startY: e.clientY,
-      basePanX: heroPanXRaw.get(),
-      basePanY: heroPanYRaw.get(),
-    };
+    
+    // We no longer initiate a drag state here
   };
 
   const onHeroPointerMove = (e: React.PointerEvent<HTMLElement>) => {
     if (reduceMotion) return;
     const el = heroRef.current;
     if (!el) return;
-    const drag = heroDragRef.current;
-    if (isDisplayedHeroVideo && drag.pointerId === e.pointerId) {
-      const dx = e.clientX - drag.startX;
-      const dy = e.clientY - drag.startY;
-      const nextX = clamp(drag.basePanX + dx * 1.25, -heroPanXMax, heroPanXMax);
-      const nextY = clamp(drag.basePanY + dy * 0.9, -heroPanYMax, heroPanYMax);
-      heroPanXRaw.set(nextX);
-      heroPanYRaw.set(nextY);
-      heroMouseXRaw.set(nextX / heroPanXMax);
-      heroMouseYRaw.set(nextY / heroPanYMax);
-      return;
-    }
+
+    // Only allow 360 effect when no buttons are pressed (hover only)
+    if (e.buttons !== 0) return;
 
     if (e.pointerType === 'touch') return;
     const rect = el.getBoundingClientRect();
@@ -521,9 +511,6 @@ export default function Home() {
     
     // Calculate distance from center [0, 1.414]
     const dist = Math.sqrt(cx * cx + cy * cy);
-    
-    // Smoothly fade the 360 effect to 0 when moving towards the corners/edges.
-    // The effect will peak around the middle area and disappear at the 4 corners.
     const factor = Math.max(0, 1 - Math.pow(dist, 1.5));
     cx *= factor;
     cy *= factor;
@@ -541,16 +528,7 @@ export default function Home() {
   };
 
   const onHeroWheel = (e: React.WheelEvent<HTMLElement>) => {
-    if (reduceMotion) return;
-    if (!isDisplayedHeroVideo) return;
-    if (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) {
-      heroPanXRaw.set(0);
-      heroMouseXRaw.set(0);
-      return;
-    }
-    const nextX = clamp(heroPanXRaw.get() - e.deltaX * 0.6, -heroPanXMax, heroPanXMax);
-    heroPanXRaw.set(nextX);
-    heroMouseXRaw.set(nextX / heroPanXMax);
+    // Disable interaction via wheel as requested
   };
 
   const onHeroPointerLeave = () => {
@@ -579,6 +557,7 @@ export default function Home() {
         onPointerCancel={onHeroPointerUp}
         onWheel={onHeroWheel}
         onPointerLeave={onHeroPointerLeave}
+        onContextMenu={(e) => e.preventDefault()}
         className="relative h-screen flex items-center justify-center overflow-hidden"
       >
         <div className="absolute inset-0 z-0">
