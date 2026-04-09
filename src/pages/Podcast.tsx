@@ -31,8 +31,14 @@ interface PodcastEpisode {
   videoUrl?: string;
 }
 
-const podcastVideo = (fileName: string) =>
-  new URL(`../../Podcast/${fileName}`, import.meta.url).href;
+import ep1 from '../../Podcast/Ep1.mp4';
+import ep2 from '../../Podcast/Ep2.mp4';
+import ep3 from '../../Podcast/Ep3.mp4';
+import ep4 from '../../Podcast/Ep4.mp4';
+import ep1VN from '../../Podcast/Ep1 VN.mp4';
+import ep2VN from '../../Podcast/Ep2 VN.mp4';
+import ep3VN from '../../Podcast/Ep3 VN.mp4';
+import ep4VN from '../../Podcast/Ep4 VN.mp4';
 
 const blogImage = (fileName: string) =>
   new URL(`../../Blog img/${fileName}`, import.meta.url).href;
@@ -47,7 +53,7 @@ const episodesEn: PodcastEpisode[] = [
     category: 'Con người',
     image: blogImage('Tiếng mẹ đẻ 03.jpg'),
     mediaType: 'video',
-    videoUrl: podcastVideo('Ep1.mp4')
+    videoUrl: ep1
   },
   {
     id: '2',
@@ -58,7 +64,7 @@ const episodesEn: PodcastEpisode[] = [
     category: 'Thiên nhiên',
     image: blogImage('Cửa Lò 03.jpg'),
     mediaType: 'video',
-    videoUrl: podcastVideo('Ep2.mp4')
+    videoUrl: ep2
   },
   {
     id: '3',
@@ -69,7 +75,7 @@ const episodesEn: PodcastEpisode[] = [
     category: 'Ẩm thực',
     image: blogImage('súp lươn xứ nghệ.jpg'),
     mediaType: 'video',
-    videoUrl: podcastVideo('Ep3.mp4')
+    videoUrl: ep3
   },
   {
     id: '4',
@@ -80,7 +86,7 @@ const episodesEn: PodcastEpisode[] = [
     category: 'Văn hóa',
     image: blogImage('Tiếng mẹ đẻ 02.jpg'),
     mediaType: 'video',
-    videoUrl: podcastVideo('Ep4.mp4')
+    videoUrl: ep4
   }
 ];
 
@@ -94,7 +100,7 @@ const episodesVi: PodcastEpisode[] = [
     category: 'Con người',
     image: blogImage('Tiếng mẹ đẻ 03.jpg'),
     mediaType: 'video',
-    videoUrl: podcastVideo('Ep1 VN.mp4')
+    videoUrl: ep1VN
   },
   {
     id: '2',
@@ -105,7 +111,7 @@ const episodesVi: PodcastEpisode[] = [
     category: 'Thiên nhiên',
     image: blogImage('Cửa Lò 03.jpg'),
     mediaType: 'video',
-    videoUrl: podcastVideo('Ep2 VN.mp4')
+    videoUrl: ep2VN
   },
   {
     id: '3',
@@ -116,7 +122,7 @@ const episodesVi: PodcastEpisode[] = [
     category: 'Ẩm thực',
     image: blogImage('súp lươn xứ nghệ.jpg'),
     mediaType: 'video',
-    videoUrl: podcastVideo('Ep3 VN.mp4')
+    videoUrl: ep3VN
   },
   {
     id: '4',
@@ -127,7 +133,7 @@ const episodesVi: PodcastEpisode[] = [
     category: 'Văn hóa',
     image: blogImage('Tiếng mẹ đẻ 02.jpg'),
     mediaType: 'video',
-    videoUrl: podcastVideo('Ep4 VN.mp4')
+    videoUrl: ep4VN
   }
 ];
 
@@ -196,12 +202,6 @@ export default function Podcast() {
     setDisplayDuration(durationsById[activeEpisode.id] ?? '--:--');
   }, [activeEpisode.id, durationsById]);
 
-  useEffect(() => {
-    if (isPlaying) return;
-    const video = videoRef.current;
-    if (!video || !activeEpisode.videoUrl) return;
-    video.load();
-  }, [activeEpisode.id, activeEpisode.videoUrl, isPlaying]);
 
   useEffect(() => {
     let cancelled = false;

@@ -1,86 +1,444 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Search, ArrowRight, MapPin, Calendar, Compass, Utensils, Home as HomeIcon, BookOpen, ChevronLeft, ChevronRight, Grid } from 'lucide-react';
+import { motion, AnimatePresence, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react';
+import { ArrowRight, MapPin, Calendar, Compass, Utensils, Home as HomeIcon, BookOpen, ChevronLeft, ChevronRight, Grid, Pause, Play, Volume2, VolumeX } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Section from '../components/Section';
 import Card from '../components/Card';
 import BookingSection from '../components/BookingSection';
 import { destinations, experiences, foodAndCulture } from '../data/ngheAnData';
 import { useI18n } from '../i18n';
-import { buildSiteDocs, searchSite } from '../services/siteSearch';
 
 const monthHeaderImage = (fileName: string) =>
+  new URL(`../../Home img/12 month header/${fileName}`, import.meta.url).href;
+
+const monthHeaderVideo = (fileName: string) =>
   new URL(`../../Home img/12 month header/${fileName}`, import.meta.url).href;
 
 const homeBodyImage = (fileName: string) =>
   new URL(`../../Home img/Body img/${fileName}`, import.meta.url).href;
 
-const monthImages: Record<string, string> = {
-  Jan: monthHeaderImage('Jan.webp'),
-  Feb: monthHeaderImage('Feb.webp'),
-  Mar: monthHeaderImage('March.webp'),
-  Apr: monthHeaderImage('April.webp'),
-  May: monthHeaderImage('May.webp'),
-  Jun: monthHeaderImage('June.webp'),
-  Jul: monthHeaderImage('July.webp'),
-  Aug: monthHeaderImage('Aug.webp'),
-  Sep: monthHeaderImage('Sep.webp'),
-  Oct: monthHeaderImage('Oct.webp'),
-  Nov: monthHeaderImage('Nov.webp'),
-  Dec: monthHeaderImage('Dec.webp'),
+type HeroMedia =
+  | { kind: 'image'; src: string }
+  | { kind: 'video'; src: string };
+
+const HERO_VIDEO_SOUND_PREF_KEY = 'heroVideoSoundEnabled';
+
+const monthMedia: Record<string, HeroMedia> = {
+  Jan: { kind: 'video', src: monthHeaderVideo('Jan Header.mp4') },
+  Feb: { kind: 'video', src: monthHeaderVideo('Feb Header.mp4') },
+  Mar: { kind: 'video', src: monthHeaderVideo('March Header.mp4') },
+  Apr: { kind: 'video', src: monthHeaderVideo('April Header.mp4') },
+  May: { kind: 'video', src: monthHeaderVideo('May Header.mp4') },
+  Jun: { kind: 'video', src: monthHeaderVideo('June Header.mp4') },
+  Jul: { kind: 'video', src: monthHeaderVideo('July Header.mp4') },
+  Aug: { kind: 'video', src: monthHeaderVideo('Aug Header.mp4') },
+  Sep: { kind: 'video', src: monthHeaderVideo('Sep Header.mp4') },
+  Oct: { kind: 'video', src: monthHeaderVideo('Oct Header.mp4') },
+  Nov: { kind: 'video', src: monthHeaderVideo('Nov header.mp4') },
+  Dec: { kind: 'video', src: monthHeaderVideo('Dec Header.mp4') },
 };
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-type SuggestionAction =
-  | { type: 'navigate'; to: string }
-  | { type: 'open'; url: string }
-  | { type: 'search'; q: string };
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
 
-type Suggestion = {
-  id: string;
-  label: string;
-  sublabel?: string;
-  action: SuggestionAction;
-};
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReduced(media.matches);
+    update();
 
-function normalizeText(v: string) {
-  return v.trim().toLowerCase();
+    if (typeof media.addEventListener === 'function') {
+      media.addEventListener('change', update);
+      return () => media.removeEventListener('change', update);
+    }
+
+    media.addListener(update);
+    return () => media.removeListener(update);
+  }, []);
+
+  return reduced;
 }
 
-function googleMapsSearchUrl(q: string) {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+async function preloadAndDecodeImage(src: string) {
+  await new Promise<void>((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error(`Failed to preload image: ${src}`));
+    img.src = src;
+  });
+
+  const img = new Image();
+  img.src = src;
+  if (typeof img.decode === 'function') {
+    try {
+      await img.decode();
+    } catch {}
+  }
 }
 
-async function fetchDuckDuckGoSuggest(q: string, signal: AbortSignal): Promise<string[]> {
-  const url = `https://duckduckgo.com/ac/?q=${encodeURIComponent(q)}&type=list`;
-  const res = await fetch(url, { signal });
-  if (!res.ok) throw new Error(`DuckDuckGo suggest error: ${res.status}`);
-  const data = await res.json();
-  if (!Array.isArray(data)) return [];
-  return data
-    .map((x: any) => (typeof x?.phrase === 'string' ? x.phrase : ''))
-    .filter((s: string) => s.trim().length > 0);
+async function preloadVideo(src: string) {
+  await new Promise<void>((resolve, reject) => {
+    const v = document.createElement('video');
+    v.preload = 'auto';
+    v.muted = true;
+    v.playsInline = true;
+    const timeoutId = window.setTimeout(() => resolve(), 2500);
+    const done = () => {
+      window.clearTimeout(timeoutId);
+      resolve();
+    };
+    const fail = () => {
+      window.clearTimeout(timeoutId);
+      reject(new Error(`Failed to preload video: ${src}`));
+    };
+    v.onloadeddata = done;
+    v.onloadedmetadata = done;
+    v.oncanplay = done;
+    v.onerror = fail;
+    v.src = src;
+    try {
+      v.load();
+    } catch {}
+  });
 }
 
 export default function Home() {
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(new Date().getMonth());
-  const selectedMonth = months[currentMonthIndex];
+  const [requestedMonthIndex, setRequestedMonthIndex] = useState(new Date().getMonth());
+  const [displayedMonthIndex, setDisplayedMonthIndex] = useState(new Date().getMonth());
+  const requestedMonth = months[requestedMonthIndex];
+  const displayedMonth = months[displayedMonthIndex];
+  const displayedHeroMedia = monthMedia[displayedMonth];
+  const isDisplayedHeroVideo = displayedHeroMedia.kind === 'video';
   const { t } = useI18n();
   const navigate = useNavigate();
-  const [query, setQuery] = useState('');
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [isSuggestOpen, setIsSuggestOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const [isSuggestLoading, setIsSuggestLoading] = useState(false);
-  const suggestBoxRef = useRef<HTMLDivElement | null>(null);
+  const heroRef = useRef<HTMLElement | null>(null);
+  const heroVideoRef = useRef<HTMLVideoElement | null>(null);
+  const [heroSize, setHeroSize] = useState({ w: 0, h: 0 });
+  const [hasHeroAudioGesture, setHasHeroAudioGesture] = useState(false);
+  const [heroVolume, setHeroVolume] = useState(0.35);
+  const [heroUserMuted, setHeroUserMuted] = useState(true);
+  const [heroSoundReady, setHeroSoundReady] = useState(false);
+  const [heroUserPaused, setHeroUserPaused] = useState(false);
+  const [heroVideoPaused, setHeroVideoPaused] = useState(false);
+  const [isHeroInView, setIsHeroInView] = useState(true);
+  const [showHeroIntro, setShowHeroIntro] = useState(false);
+  const [heroIntroHasRun, setHeroIntroHasRun] = useState(false);
+  const heroDragRef = useRef<{
+    pointerId: number | null;
+    startX: number;
+    startY: number;
+    basePanX: number;
+    basePanY: number;
+  }>({ pointerId: null, startX: 0, startY: 0, basePanX: 0, basePanY: 0 });
+  const reduceMotion = usePrefersReducedMotion();
+  const { scrollYProgress: heroScrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const heroScrollClamped = useTransform(heroScrollYProgress, (v) => Math.max(0, Math.min(1, v)));
+  const heroBgY = useTransform(heroScrollClamped, [0, 1], [0, 0]);
+  const heroOverlayOpacity = useTransform(heroScrollClamped, [0, 1], [0.15, 0.4]);
+  const heroLoadSeq = useRef(0);
+  const heroPreloaded = useRef<Set<string>>(new Set());
+  const heroPanXRaw = useMotionValue(0);
+  const heroPanYRaw = useMotionValue(0);
+  const heroMouseXRaw = useMotionValue(0);
+  const heroMouseYRaw = useMotionValue(0);
+  const heroPanX = useSpring(heroPanXRaw, { stiffness: 120, damping: 26, mass: 0.5 });
+  const heroPanY = useSpring(heroPanYRaw, { stiffness: 120, damping: 26, mass: 0.5 });
+  const heroMouseX = useSpring(heroMouseXRaw, { stiffness: 140, damping: 28, mass: 0.5 });
+  const heroMouseY = useSpring(heroMouseYRaw, { stiffness: 140, damping: 28, mass: 0.5 });
+  const heroY = useTransform([heroBgY, heroPanY], ([a, b]) => (a as number) + (b as number));
+  const heroMediaScale = reduceMotion ? 1 : isDisplayedHeroVideo ? 1.15 : 1.1;
+  const heroPanXMax = useMemo(() => {
+    if (!heroSize.w) return 80;
+    return Math.max(30, (heroMediaScale - 1) * (heroSize.w / 2) - 10);
+  }, [heroMediaScale, heroSize.w]);
+  const heroPanYMax = useMemo(() => {
+    if (!heroSize.h) return 50;
+    return Math.max(20, (heroMediaScale - 1) * (heroSize.h / 2) - 10);
+  }, [heroMediaScale, heroSize.h]);
+  const heroRotY = useTransform(heroPanX, (v) => (v / heroPanXMax) * 22);
+  const heroRotX = useTransform(heroPanY, (v) => (-v / heroPanYMax) * 14);
+  const heroSpecular = useTransform([heroMouseX, heroMouseY], ([x, y]) => {
+    const xp = 50 + (x as number) * 22;
+    const yp = 50 + (y as number) * 18;
+    return `radial-gradient(900px circle at ${xp}% ${yp}%, rgba(255,255,255,0.14), rgba(255,255,255,0.02) 22%, transparent 55%)`;
+  });
+  const heroConcaveShade = useTransform([heroMouseX, heroMouseY], ([x, y]) => {
+    const xp = 50 + (x as number) * 10;
+    const yp = 50 + (y as number) * 8;
+    const xOpp = 50 - (x as number) * 8;
+    const yOpp = 50 - (y as number) * 6;
+    return `radial-gradient(120% 90% at 50% 50%, rgba(255,255,255,0.06), transparent 55%), radial-gradient(130% 110% at ${xOpp}% ${yOpp}%, rgba(0,0,0,0.18), transparent 60%), radial-gradient(120% 110% at ${xp}% ${yp}%, rgba(0,0,0,0.12), transparent 62%)`;
+  });
+  const featuredDestinationsRef = useRef<HTMLDivElement | null>(null);
+  const [showFloatingWidgets, setShowFloatingWidgets] = useState(false);
+
+  const heroIntroTop = t('Chào mừng đến với Nghệ An');
+  const heroIntroMain = t('Khám phá trái tim miền Trung');
+  const heroIntroTopChars = useMemo(() => Array.from(heroIntroTop), [heroIntroTop]);
+  const heroIntroMainWords = useMemo(() => heroIntroMain.trim().split(/\s+/).filter(Boolean), [heroIntroMain]);
 
   useEffect(() => {
-    const id = window.setInterval(() => {
-      setCurrentMonthIndex((prev) => (prev + 1) % months.length);
-    }, 7000);
-    return () => window.clearInterval(id);
+    const el = heroRef.current;
+    if (!el) return;
+    const update = () => setHeroSize({ w: el.clientWidth, h: el.clientHeight });
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
+
+  useEffect(() => {
+    const enabled = window.localStorage.getItem(HERO_VIDEO_SOUND_PREF_KEY) === '1';
+    setHasHeroAudioGesture(enabled);
+    setHeroUserMuted(!enabled);
+    setHeroSoundReady(false);
+    setHeroUserPaused(false);
+  }, []);
+
+  useEffect(() => {
+    if (!showHeroIntro) return;
+    const id = window.setTimeout(() => setShowHeroIntro(false), 6500);
+    return () => window.clearTimeout(id);
+  }, [showHeroIntro]);
+
+  useEffect(() => {
+    if (heroIntroHasRun) return;
+    const media = monthMedia[displayedMonth];
+    const src = media?.src;
+    if (!src) return;
+
+    let cancelled = false;
+    let startId: number | null = null;
+
+    const run = async () => {
+      try {
+        if (media.kind === 'video') await preloadVideo(src);
+        else await preloadAndDecodeImage(src);
+      } catch {}
+
+      if (cancelled) return;
+      startId = window.setTimeout(() => {
+        if (cancelled) return;
+        setShowHeroIntro(true);
+        setHeroIntroHasRun(true);
+      }, 420);
+    };
+
+    run();
+
+    return () => {
+      cancelled = true;
+      if (startId) window.clearTimeout(startId);
+    };
+  }, [displayedMonth, heroIntroHasRun]);
+
+  useEffect(() => {
+    const el = featuredDestinationsRef.current;
+    if (!el) return;
+    if (showFloatingWidgets) return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry?.isIntersecting) return;
+        setShowFloatingWidgets(true);
+        obs.disconnect();
+      },
+      { threshold: 0.25 }
+    );
+
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [showFloatingWidgets]);
+
+  useEffect(() => {
+    setHeroSoundReady(false);
+    setHeroUserPaused(false);
+    if (heroVideoRef.current) heroVideoRef.current.volume = heroVolume;
+  }, [displayedMonth]);
+
+  useEffect(() => {
+    const v = heroVideoRef.current;
+    if (!v) return;
+    v.volume = heroVolume;
+  }, [heroVolume]);
+
+  useEffect(() => {
+    if (!isDisplayedHeroVideo) return;
+    const section = heroRef.current;
+    if (!section) return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        const inView = Boolean(entry?.isIntersecting) && (entry?.intersectionRatio ?? 0) >= 0.35;
+        setIsHeroInView(inView);
+      },
+      { threshold: [0, 0.2, 0.35, 0.6, 1] }
+    );
+
+    obs.observe(section);
+    return () => obs.disconnect();
+  }, [isDisplayedHeroVideo]);
+
+  useEffect(() => {
+    if (!isDisplayedHeroVideo) return;
+    let cleanup: (() => void) | null = null;
+    const id = window.setTimeout(() => {
+      const v = heroVideoRef.current;
+      if (!v) return;
+      const sync = () => {
+        setHeroVideoPaused(v.paused);
+        setHeroSoundReady(!v.muted && !v.paused);
+      };
+      sync();
+      v.addEventListener('play', sync);
+      v.addEventListener('pause', sync);
+      v.addEventListener('volumechange', sync);
+      cleanup = () => {
+        v.removeEventListener('play', sync);
+        v.removeEventListener('pause', sync);
+        v.removeEventListener('volumechange', sync);
+      };
+    }, 0);
+    return () => {
+      window.clearTimeout(id);
+      cleanup?.();
+    };
+  }, [displayedMonth, isDisplayedHeroVideo]);
+
+  useEffect(() => {
+    if (!isDisplayedHeroVideo) return;
+    const v = heroVideoRef.current;
+    if (!v) return;
+
+    if (!isHeroInView) {
+      v.muted = true;
+      setHeroSoundReady(false);
+      setHeroVideoPaused(true);
+      try {
+        v.pause();
+      } catch {}
+      return;
+    }
+
+    if (heroUserPaused) {
+      setHeroVideoPaused(true);
+      try {
+        v.pause();
+      } catch {}
+      return;
+    }
+
+    const attemptPlay = async (expectSound: boolean) => {
+      try {
+        await v.play();
+        setHeroVideoPaused(false);
+        if (expectSound) setHeroSoundReady(true);
+      } catch {
+        setHeroVideoPaused(true);
+        if (expectSound) setHeroSoundReady(false);
+      }
+    };
+
+    v.volume = heroVolume;
+    if (heroUserMuted) {
+      v.muted = true;
+      setHeroSoundReady(false);
+      void attemptPlay(false);
+      return;
+    } else if (hasHeroAudioGesture) {
+      v.muted = false;
+      void attemptPlay(true);
+      return;
+    } else {
+      v.muted = true;
+      setHeroSoundReady(false);
+      void attemptPlay(false);
+      return;
+    }
+  }, [displayedMonth, hasHeroAudioGesture, heroUserMuted, heroUserPaused, heroVolume, isDisplayedHeroVideo, isHeroInView]);
+
+  useEffect(() => {
+    if (!isDisplayedHeroVideo) return;
+    if (heroUserMuted) return;
+    if (hasHeroAudioGesture) return;
+
+    const enableFromAnyGesture = () => {
+      if (heroUserMuted) return;
+      setHasHeroAudioGesture(true);
+      window.localStorage.setItem(HERO_VIDEO_SOUND_PREF_KEY, '1');
+      void tryEnableHeroVideoSound();
+    };
+
+    window.addEventListener('pointerdown', enableFromAnyGesture, true);
+    window.addEventListener('keydown', enableFromAnyGesture, true);
+    window.addEventListener('wheel', enableFromAnyGesture as any, { capture: true, passive: true } as any);
+    window.addEventListener('touchstart', enableFromAnyGesture as any, { capture: true, passive: true } as any);
+
+    return () => {
+      window.removeEventListener('pointerdown', enableFromAnyGesture, true);
+      window.removeEventListener('keydown', enableFromAnyGesture, true);
+      window.removeEventListener('wheel', enableFromAnyGesture as any, true);
+      window.removeEventListener('touchstart', enableFromAnyGesture as any, true);
+    };
+  }, [displayedMonth, hasHeroAudioGesture, heroUserMuted, heroVolume, isDisplayedHeroVideo]);
+
+  useEffect(() => {
+    setDisplayedMonthIndex(requestedMonthIndex);
+    const media = monthMedia[requestedMonth];
+    const src = media?.src;
+    const seq = ++heroLoadSeq.current;
+
+    const run = async () => {
+      if (!src) return;
+      if (heroPreloaded.current.has(src)) return;
+      try {
+        if (media.kind === 'video') await preloadVideo(src);
+        else await preloadAndDecodeImage(src);
+      } catch {}
+      if (seq !== heroLoadSeq.current) return;
+      heroPreloaded.current.add(src);
+    };
+
+    void run();
+  }, [requestedMonth, requestedMonthIndex]);
+
+  useEffect(() => {
+    const preloadTargets = [
+      monthMedia[months[(displayedMonthIndex + 1) % months.length]],
+      monthMedia[months[(displayedMonthIndex + 2) % months.length]],
+      monthMedia[months[(displayedMonthIndex - 1 + months.length) % months.length]],
+    ].filter(Boolean) as HeroMedia[];
+
+    const run = async () => {
+      for (const m of preloadTargets) {
+        const src = m.src;
+        if (!src) continue;
+        if (heroPreloaded.current.has(src)) continue;
+        try {
+          if (m.kind === 'video') await preloadVideo(src);
+          else await preloadAndDecodeImage(src);
+        } catch {}
+        heroPreloaded.current.add(src);
+      }
+    };
+
+    const w = window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number; cancelIdleCallback?: (id: number) => void };
+    if (typeof w.requestIdleCallback === 'function') {
+      const id = w.requestIdleCallback(() => run(), { timeout: 800 });
+      return () => {
+        if (typeof w.cancelIdleCallback === 'function') w.cancelIdleCallback(id);
+      };
+    }
+
+    const id = window.setTimeout(() => run(), 300);
+    return () => window.clearTimeout(id);
+  }, [displayedMonthIndex]);
 
   const getServicePath = (service: string) => {
     if (service === 'Tư vấn Tour') return '/planning';
@@ -90,237 +448,407 @@ export default function Home() {
     return '/booking';
   };
 
-  const siteDocs = useMemo(() => buildSiteDocs(t), [t]);
-  const siteMatchesForQuery = useMemo(() => searchSite(siteDocs, query, 6), [siteDocs, query]);
-
-  useEffect(() => {
-    const onDown = (e: MouseEvent) => {
-      if (!isSuggestOpen) return;
-      const el = suggestBoxRef.current;
-      if (!el) return;
-      const target = e.target as Node | null;
-      if (target && el.contains(target)) return;
-      setIsSuggestOpen(false);
-      setActiveIndex(-1);
-    };
-    document.addEventListener('mousedown', onDown);
-    return () => document.removeEventListener('mousedown', onDown);
-  }, [isSuggestOpen]);
-
-  useEffect(() => {
-    const q = query.trim();
-    if (!isSuggestOpen) return;
-    if (!q) {
-      setSuggestions([]);
-      setActiveIndex(-1);
-      setIsSuggestLoading(false);
-      return;
-    }
-
-    const qNorm = normalizeText(q);
-    const siteSuggestions: Suggestion[] = siteMatchesForQuery.map((r) => ({
-      id: `site:${r.doc.id}`,
-      label: r.doc.title,
-      sublabel: r.doc.kind,
-      action: { type: 'navigate', to: r.doc.path },
-    }));
-
-    const quick: Suggestion[] = [
-      { id: `quick:all:${q}`, label: `Xem kết quả tìm kiếm: ${q}`, action: { type: 'navigate', to: `/search?q=${encodeURIComponent(q)}` } },
-      { id: `quick:gmap:${q}`, label: `Dẫn đường Google Maps: ${q}`, action: { type: 'open', url: googleMapsSearchUrl(q) } },
-    ];
-
-    setSuggestions([...siteSuggestions, ...quick]);
-    setActiveIndex(-1);
-    setIsSuggestLoading(q.length >= 2);
-
-    if (q.length < 2) return;
-
-    const controller = new AbortController();
-    const timer = window.setTimeout(() => {
-      fetchDuckDuckGoSuggest(q, controller.signal)
-        .then((phrases) => {
-          const web = phrases
-            .slice(0, 6)
-            .filter((p) => normalizeText(p) !== qNorm)
-            .map((p) => ({
-              id: `web:${p}`,
-              label: p,
-              sublabel: 'Web',
-              action: { type: 'navigate', to: `/search?q=${encodeURIComponent(p)}` } as const,
-            }));
-          setSuggestions((prev) => {
-            const base = prev.filter((s) => !s.id.startsWith('web:'));
-            return [...base, ...web];
-          });
-        })
-        .catch(() => {})
-        .finally(() => {
-          if (controller.signal.aborted) return;
-          setIsSuggestLoading(false);
-        });
-    }, 250);
-
-    return () => {
-      window.clearTimeout(timer);
-      controller.abort();
-    };
-  }, [query, isSuggestOpen, siteMatchesForQuery]);
-
-  const runSuggestion = (s: Suggestion) => {
-    setIsSuggestOpen(false);
-    setActiveIndex(-1);
-
-    if (s.action.type === 'navigate') {
-      navigate(s.action.to);
-      return;
-    }
-    if (s.action.type === 'open') {
-      window.open(s.action.url, '_blank', 'noopener,noreferrer');
-      return;
-    }
-    navigate(`/search?q=${encodeURIComponent(s.action.q)}`);
-  };
-
-  const onSubmitSearch = () => {
-    const q = query.trim();
-    if (!q) return;
-    navigate(`/search?q=${encodeURIComponent(q)}`);
-  };
-
   const nextMonth = () => {
-    setCurrentMonthIndex((prev) => (prev + 1) % months.length);
+    setRequestedMonthIndex((prev) => (prev + 1) % months.length);
   };
 
   const prevMonth = () => {
-    setCurrentMonthIndex((prev) => (prev - 1 + months.length) % months.length);
+    setRequestedMonthIndex((prev) => (prev - 1 + months.length) % months.length);
   };
 
+  const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
+
+  const tryEnableHeroVideoSound = async () => {
+    if (!isDisplayedHeroVideo) return;
+    if (heroUserMuted) return;
+    const v = heroVideoRef.current;
+    if (!v) return;
+    try {
+      v.muted = false;
+      v.volume = heroVolume;
+      await v.play();
+      setHeroSoundReady(true);
+      setHeroVideoPaused(false);
+    } catch {
+      setHeroSoundReady(false);
+      setHeroVideoPaused(true);
+    }
+  };
+
+  const onHeroPointerDown = (e: React.PointerEvent<HTMLElement>) => {
+    if (reduceMotion) return;
+    if (!isDisplayedHeroVideo) return;
+    const target = e.target as HTMLElement | null;
+    if (target?.closest('[data-hero-control]')) return;
+    if (target?.closest('[data-hero-ui]')) return;
+    if (!hasHeroAudioGesture) setHasHeroAudioGesture(true);
+    void tryEnableHeroVideoSound();
+    const el = heroRef.current;
+    if (!el) return;
+    el.setPointerCapture(e.pointerId);
+    heroDragRef.current = {
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startY: e.clientY,
+      basePanX: heroPanXRaw.get(),
+      basePanY: heroPanYRaw.get(),
+    };
+  };
+
+  const onHeroPointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    if (reduceMotion) return;
+    const el = heroRef.current;
+    if (!el) return;
+    const drag = heroDragRef.current;
+    if (isDisplayedHeroVideo && drag.pointerId === e.pointerId) {
+      const dx = e.clientX - drag.startX;
+      const dy = e.clientY - drag.startY;
+      const nextX = clamp(drag.basePanX + dx * 1.25, -heroPanXMax, heroPanXMax);
+      const nextY = clamp(drag.basePanY + dy * 0.9, -heroPanYMax, heroPanYMax);
+      heroPanXRaw.set(nextX);
+      heroPanYRaw.set(nextY);
+      heroMouseXRaw.set(nextX / heroPanXMax);
+      heroMouseYRaw.set(nextY / heroPanYMax);
+      return;
+    }
+
+    if (e.pointerType === 'touch') return;
+    const rect = el.getBoundingClientRect();
+    const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const ny = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    let cx = clamp(nx, -1, 1);
+    let cy = clamp(ny, -1, 1);
+    
+    // Calculate distance from center [0, 1.414]
+    const dist = Math.sqrt(cx * cx + cy * cy);
+    
+    // Smoothly fade the 360 effect to 0 when moving towards the corners/edges.
+    // The effect will peak around the middle area and disappear at the 4 corners.
+    const factor = Math.max(0, 1 - Math.pow(dist, 1.5));
+    cx *= factor;
+    cy *= factor;
+
+    heroPanXRaw.set(cx * Math.min(110, heroPanXMax));
+    heroPanYRaw.set(cy * Math.min(70, heroPanYMax));
+    heroMouseXRaw.set(cx);
+    heroMouseYRaw.set(cy);
+  };
+
+  const onHeroPointerUp = (e: React.PointerEvent<HTMLElement>) => {
+    const drag = heroDragRef.current;
+    if (drag.pointerId !== e.pointerId) return;
+    heroDragRef.current.pointerId = null;
+  };
+
+  const onHeroWheel = (e: React.WheelEvent<HTMLElement>) => {
+    if (reduceMotion) return;
+    if (!isDisplayedHeroVideo) return;
+    if (Math.abs(e.deltaY) >= Math.abs(e.deltaX)) {
+      heroPanXRaw.set(0);
+      heroMouseXRaw.set(0);
+      return;
+    }
+    const nextX = clamp(heroPanXRaw.get() - e.deltaX * 0.6, -heroPanXMax, heroPanXMax);
+    heroPanXRaw.set(nextX);
+    heroMouseXRaw.set(nextX / heroPanXMax);
+  };
+
+  const onHeroPointerLeave = () => {
+    heroDragRef.current.pointerId = null;
+    heroPanXRaw.set(0);
+    heroPanYRaw.set(0);
+    heroMouseXRaw.set(0);
+    heroMouseYRaw.set(0);
+  };
+
+  const heroIsSoundOn = !heroUserMuted && hasHeroAudioGesture && heroSoundReady;
+
   return (
-    <div className="relative">
+    <motion.div
+      initial={reduceMotion ? undefined : { opacity: 0, y: 18 }}
+      animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, ease: 'easeOut' }}
+      className="relative"
+    >
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section
+        ref={heroRef}
+        onPointerDown={onHeroPointerDown}
+        onPointerMove={onHeroPointerMove}
+        onPointerUp={onHeroPointerUp}
+        onPointerCancel={onHeroPointerUp}
+        onWheel={onHeroWheel}
+        onPointerLeave={onHeroPointerLeave}
+        className="relative h-screen flex items-center justify-center overflow-hidden"
+      >
         <div className="absolute inset-0 z-0">
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={selectedMonth}
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
-              src={monthImages[selectedMonth]}
-              alt={t('Nghệ An in {month}', { month: selectedMonth })}
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
+          <AnimatePresence mode="sync" initial={false}>
+            {displayedHeroMedia.kind === 'video' ? (
+              <motion.video
+                key={displayedMonth}
+                ref={heroVideoRef}
+                initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
+                animate={reduceMotion ? { opacity: 1 } : { opacity: 1 }}
+                exit={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
+                transition={reduceMotion ? undefined : { duration: 0.35, ease: 'linear' }}
+                src={displayedHeroMedia.src}
+                className="absolute inset-0 w-full h-full object-cover"
+                playsInline
+                autoPlay
+                muted={!hasHeroAudioGesture || heroUserMuted}
+                preload="auto"
+                onEnded={nextMonth}
+                onCanPlay={() => {
+                  if (heroUserPaused) return;
+                  const v = heroVideoRef.current;
+                  if (!v) return;
+                  try {
+                    void v.play();
+                  } catch {}
+                }}
+                style={{
+                  x: 0,
+                  y: 0,
+                  scale: reduceMotion ? 1 : 1.15,
+                  filter: reduceMotion ? undefined : 'none',
+                  transformPerspective: 1000,
+                  transformStyle: 'preserve-3d',
+                  rotateX: reduceMotion ? 0 : heroRotX,
+                  rotateY: reduceMotion ? 0 : heroRotY,
+                  willChange: 'transform',
+                }}
+              />
+            ) : (
+              <motion.img
+                key={displayedMonth}
+                initial={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
+                animate={reduceMotion ? { opacity: 1 } : { opacity: 1 }}
+                exit={reduceMotion ? { opacity: 1 } : { opacity: 0 }}
+                transition={reduceMotion ? undefined : { duration: 0.35, ease: 'linear' }}
+                src={displayedHeroMedia.src}
+                alt={t('Nghệ An in {month}', { month: displayedMonth })}
+                className="absolute inset-0 w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+                decoding="async"
+                fetchPriority="high"
+                loading="eager"
+                style={{
+                  x: 0,
+                  y: 0,
+                  scale: reduceMotion ? 1 : 1.1,
+                  filter: reduceMotion ? undefined : 'none',
+                  transformPerspective: 1000,
+                  transformStyle: 'preserve-3d',
+                  rotateX: reduceMotion ? 0 : heroRotX,
+                  rotateY: reduceMotion ? 0 : heroRotY,
+                  willChange: 'transform',
+                }}
+              />
+            )}
           </AnimatePresence>
-          <div className="absolute inset-0 bg-black/40" />
+          <motion.div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: heroConcaveShade,
+              opacity: reduceMotion ? 0 : 0.5,
+              mixBlendMode: 'multiply',
+            }}
+          />
+          <motion.div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: heroSpecular,
+              opacity: reduceMotion ? 0 : 0.38,
+              mixBlendMode: 'overlay',
+            }}
+          />
+          <motion.div className="absolute inset-0 bg-black/20" style={{ opacity: heroOverlayOpacity }} />
         </div>
 
-        <div className={`relative ${isSuggestOpen ? 'z-40' : 'z-10'} text-center px-4 max-w-4xl mx-auto`}>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-white font-bold tracking-[0.3em] uppercase text-sm mb-6"
-          >
-            {t('Chào mừng đến với Nghệ An')}
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-12 tracking-tight font-serif"
-          >
-            {t('Khám phá trái tim miền Trung')}
-          </motion.h1>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="bg-white p-2 rounded-sm shadow-2xl flex flex-col md:flex-row items-stretch md:items-center max-w-3xl mx-auto"
-          >
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (activeIndex >= 0 && activeIndex < suggestions.length) {
-                  runSuggestion(suggestions[activeIndex]);
-                  return;
-                }
-                onSubmitSearch();
-              }}
-              className="flex flex-col md:flex-row items-stretch md:items-center w-full"
-            >
-              <div ref={suggestBoxRef} className="relative flex-grow flex items-center px-4 py-3 border-b md:border-b-0 md:border-r border-gray-100">
-                <Search className="text-gray-400 mr-3" size={20} />
-                <input
-                  type="text"
-                  placeholder={t('Bạn muốn đi đâu?')}
-                  value={query}
-                  onChange={(e) => {
-                    setQuery(e.target.value);
-                    if (!isSuggestOpen) setIsSuggestOpen(true);
-                  }}
-                  onFocus={() => setIsSuggestOpen(true)}
-                  onKeyDown={(e) => {
-                    if (!isSuggestOpen) return;
-                    if (e.key === 'Escape') {
-                      setIsSuggestOpen(false);
-                      setActiveIndex(-1);
-                      return;
-                    }
-                    if (e.key === 'ArrowDown') {
-                      e.preventDefault();
-                      setActiveIndex((idx) => Math.min(idx + 1, suggestions.length - 1));
-                      return;
-                    }
-                    if (e.key === 'ArrowUp') {
-                      e.preventDefault();
-                      setActiveIndex((idx) => Math.max(idx - 1, 0));
-                      return;
-                    }
-                  }}
-                  className="w-full outline-none text-gray-800 font-medium"
-                />
-
-                {isSuggestOpen && (suggestions.length > 0 || isSuggestLoading) && (
-                  <div className="absolute left-0 right-0 top-full mt-2 bg-white border border-gray-100 shadow-2xl rounded-sm overflow-hidden z-50">
-                    {isSuggestLoading && (
-                      <div className="px-4 py-3 text-xs text-gray-500">Đang gợi ý...</div>
-                    )}
-                    {suggestions.map((s, idx) => (
-                      <button
-                        key={s.id}
-                        type="button"
-                        onMouseDown={(ev) => ev.preventDefault()}
-                        onClick={() => runSuggestion(s)}
-                        className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors ${
-                          idx === activeIndex ? 'bg-gray-50' : ''
-                        }`}
-                      >
-                        <div className="flex items-baseline justify-between gap-3">
-                          <span className="text-sm font-semibold text-gray-900 truncate">{s.label}</span>
-                          {s.sublabel && <span className="text-[10px] uppercase tracking-widest text-gray-400 shrink-0">{s.sublabel}</span>}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
+        {isDisplayedHeroVideo && (
+          <div className="absolute bottom-8 right-4 sm:right-8 lg:right-16 z-20 flex items-center gap-4">
+            <div>
               <button
-                type="submit"
-                className="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 transition-colors uppercase tracking-widest text-sm"
+                type="button"
+                data-hero-control
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const nextMuted = !heroUserMuted;
+                  setHeroUserMuted(nextMuted);
+                  window.localStorage.setItem(HERO_VIDEO_SOUND_PREF_KEY, nextMuted ? '0' : '1');
+                  const v = heroVideoRef.current;
+                  if (v) {
+                    if (nextMuted) {
+                      v.muted = true;
+                      setHeroSoundReady(false);
+                    } else {
+                      if (!hasHeroAudioGesture) setHasHeroAudioGesture(true);
+                      setHeroUserPaused(false);
+                      v.muted = false;
+                      v.volume = heroVolume;
+                      void tryEnableHeroVideoSound();
+                    }
+                  }
+                }}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="w-12 h-12 flex items-center justify-center text-white/90 hover:text-white transition-colors drop-shadow-lg"
+                aria-label={t('Âm lượng')}
               >
-                {t('Tìm kiếm')}
+                {heroIsSoundOn ? <Volume2 size={26} /> : <VolumeX size={26} />}
               </button>
-            </form>
-          </motion.div>
+            </div>
+            <div>
+              <button
+                type="button"
+                data-hero-control
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const v = heroVideoRef.current;
+                  if (!v) return;
+                  if (v.paused) {
+                    setHeroUserPaused(false);
+                    if (!heroUserMuted && hasHeroAudioGesture) {
+                      void tryEnableHeroVideoSound();
+                      return;
+                    }
+                    try {
+                      void v.play();
+                    } catch {}
+                    return;
+                  }
+                  setHeroUserPaused(true);
+                  try {
+                    v.pause();
+                  } catch {}
+                }}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="w-12 h-12 rounded-full border-2 border-white/80 text-white/90 hover:text-white hover:border-white transition-colors flex items-center justify-center drop-shadow-lg"
+                aria-label={t('Tạm dừng')}
+              >
+                {heroVideoPaused ? <Play size={22} /> : <Pause size={22} />}
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex flex-col items-center justify-center">
+          <AnimatePresence initial={false}>
+            {showHeroIntro && (
+              <motion.div
+                key="hero-intro"
+                initial={reduceMotion ? undefined : { opacity: 0, y: 14, scale: 0.98 }}
+                animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                exit={reduceMotion ? undefined : { opacity: 0, y: 10, scale: 0.98 }}
+                transition={reduceMotion ? undefined : { type: 'spring', stiffness: 220, damping: 20, mass: 0.5 }}
+                className="flex flex-col items-center gap-4"
+                style={reduceMotion ? undefined : { perspective: 1000 }}
+              >
+                {reduceMotion ? (
+                  <>
+                    <p className="text-white font-bold tracking-[0.24em] uppercase text-sm md:text-base">
+                      {heroIntroTop}
+                    </p>
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight font-serif leading-[1.05]">
+                      {heroIntroMain}
+                    </h1>
+                  </>
+                ) : (
+                  <>
+                    <motion.p
+                      aria-label={heroIntroTop}
+                      initial={{ opacity: 0, y: 18, filter: 'blur(16px)', clipPath: 'inset(0 0 100% 0)' }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                        filter: 'blur(0px)',
+                        clipPath: 'inset(0 0 0% 0)',
+                        x: [0, -8, 7, -4, 0],
+                      }}
+                      exit={{ opacity: 0, y: -10, filter: 'blur(14px)' }}
+                      transition={{
+                        duration: 0.95,
+                        ease: [0.16, 1, 0.3, 1],
+                        x: { duration: 0.22, ease: 'linear', delay: 0.48 },
+                      }}
+                      className="text-white font-bold tracking-[0.24em] uppercase text-sm md:text-base"
+                      style={{ transformStyle: 'preserve-3d' }}
+                    >
+                      {heroIntroTopChars.map((ch, i) => (
+                        <motion.span
+                          key={`${ch}-${i}`}
+                          aria-hidden
+                          initial={{ opacity: 0, y: 26, rotateX: 120, rotateZ: -2.5, filter: 'blur(18px)' }}
+                          animate={{ opacity: 1, y: 0, rotateX: 0, rotateZ: 0, filter: 'blur(0px)' }}
+                          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.55 + i * 0.03 }}
+                          className="inline-block"
+                          style={{ transformOrigin: '50% 100%' }}
+                        >
+                          {ch === ' ' ? '\u00A0' : ch}
+                        </motion.span>
+                      ))}
+                    </motion.p>
+
+                    <motion.h1
+                      aria-label={heroIntroMain}
+                      initial={{ opacity: 0, y: 40, scale: 0.92, rotateX: 65, rotateZ: -1.2, filter: 'blur(22px)', clipPath: 'inset(0 100% 0 0)' }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        rotateX: 0,
+                        rotateZ: 0,
+                        filter: 'blur(0px)',
+                        clipPath: 'inset(0 0% 0 0)',
+                      }}
+                      exit={{ opacity: 0, y: -18, scale: 0.98, rotateX: 10, filter: 'blur(14px)' }}
+                      transition={{ duration: 1.35, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
+                      className="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight font-serif leading-[1.05]"
+                      style={{ transformStyle: 'preserve-3d' }}
+                    >
+                      <span className="relative inline-block overflow-visible align-bottom pb-2">
+                        <motion.span
+                          aria-hidden
+                          className="absolute inset-0"
+                          initial={{ x: '-140%', opacity: 0 }}
+                          animate={{ x: '140%', opacity: [0, 1, 0] }}
+                          transition={{ duration: 1.05, ease: [0.16, 1, 0.3, 1], delay: 0.95 }}
+                          style={{
+                            backgroundImage:
+                              'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.26) 20%, rgba(255,255,255,0.06) 50%, transparent 100%)',
+                            mixBlendMode: 'overlay',
+                          }}
+                        />
+                        <span className="relative">
+                          {heroIntroMainWords.map((word, i) => (
+                            <motion.span
+                              key={`${word}-${i}`}
+                              aria-hidden
+                              initial={{ opacity: 0, y: 34, rotateX: 95, rotateZ: -0.8, filter: 'blur(26px)' }}
+                              animate={{ opacity: 1, y: 0, rotateX: 0, rotateZ: 0, filter: 'blur(0px)' }}
+                              transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1], delay: 0.65 + i * 0.11 }}
+                              className="inline-block"
+                              style={{ transformOrigin: '50% 100%' }}
+                            >
+                              {word}
+                              {i < heroIntroMainWords.length - 1 ? '\u00A0' : null}
+                            </motion.span>
+                          ))}
+                        </span>
+                      </span>
+                    </motion.h1>
+                  </>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Month Selector - Left Aligned */}
-        <div className="absolute bottom-12 left-4 sm:left-8 lg:left-16 z-20 flex items-center space-x-6 md:space-x-10 text-white">
+        <div data-hero-ui className="absolute bottom-12 left-4 sm:left-8 lg:left-16 z-20 flex items-center space-x-6 md:space-x-10 text-white">
           <button className="hover:text-red-500 transition-colors shrink-0">
             <Grid size={24} />
           </button>
@@ -333,7 +861,7 @@ export default function Home() {
             <div className="flex items-center space-x-6 md:space-x-10 overflow-hidden">
               {months.map((month, idx) => {
                 // Show a window of months around the current index
-                const diff = (idx - currentMonthIndex + months.length) % months.length;
+                const diff = (idx - requestedMonthIndex + months.length) % months.length;
                 const isVisible = diff <= 2 || diff >= months.length - 2;
                 
                 if (!isVisible) return null;
@@ -341,9 +869,9 @@ export default function Home() {
                 return (
                   <button
                     key={month}
-                    onClick={() => setCurrentMonthIndex(idx)}
+                    onClick={() => setRequestedMonthIndex(idx)}
                     className={`text-xl md:text-2xl font-bold tracking-tight transition-all duration-300 shrink-0 ${
-                      idx === currentMonthIndex ? 'text-white scale-110' : 'text-white/50 hover:text-white/80'
+                      idx === requestedMonthIndex ? 'text-white scale-110' : 'text-white/50 hover:text-white/80'
                     }`}
                   >
                     {month}
@@ -360,8 +888,8 @@ export default function Home() {
 
         {/* Scroll Indicator */}
         <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
+          animate={reduceMotion ? undefined : { y: [0, 10, 0] }}
+          transition={reduceMotion ? undefined : { repeat: Infinity, duration: 2 }}
           className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white flex flex-col items-center"
         >
           <span className="text-[10px] font-bold uppercase tracking-widest mb-2">{t('Cuộn để xem')}</span>
@@ -419,11 +947,13 @@ export default function Home() {
             viewport={{ once: true }}
             className="relative"
           >
-            <img
+            <motion.img
               src={homeBodyImage('mô tê răng rứa.webp')}
               alt="Nghệ An Culture"
               className="rounded-sm shadow-2xl"
               referrerPolicy="no-referrer"
+              whileHover={reduceMotion ? undefined : { scale: 1.02, rotate: -0.3 }}
+              transition={{ type: 'spring', stiffness: 220, damping: 18 }}
             />
             <div className="absolute -bottom-10 -left-10 bg-white p-8 shadow-xl hidden md:block max-w-xs">
               <p className="text-red-600 font-bold text-4xl mb-2">{t('"Mô, tê, răng, rứa"')}</p>
@@ -434,7 +964,8 @@ export default function Home() {
       </Section>
 
       {/* Featured Destinations - Bento Grid Layout */}
-      <Section title={t('Điểm đến nổi bật')} subtitle={t('Những nơi bạn không thể bỏ qua')} className="bg-gray-50">
+      <div ref={featuredDestinationsRef}>
+        <Section title={t('Điểm đến nổi bật')} subtitle={t('Những nơi bạn không thể bỏ qua')} className="bg-gray-50">
         <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-6 auto-rows-[300px]">
           {/* Large Featured Card */}
           <Card
@@ -534,7 +1065,8 @@ export default function Home() {
             <ArrowRight size={18} className="ml-2 relative z-10 group-hover:translate-x-2 transition-transform" />
           </button>
         </div>
-      </Section>
+        </Section>
+      </div>
 
       {/* Featured Experiences - Overlapping Layout */}
       <Section title={t('Trải nghiệm độc đáo')} subtitle={t('Hành trình của những cảm xúc')}>
@@ -577,14 +1109,19 @@ export default function Home() {
       </Section>
 
       {/* Booking Section */}
-      <BookingSection />
+      <BookingSection showFloatingWidgets={showFloatingWidgets} />
 
       {/* Food & Culture */}
       <Section title={t('Ẩm thực & Văn hóa')} subtitle={t('Hương vị và tâm hồn xứ Nghệ')} dark>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {foodAndCulture.map((item) => (
-            <div
+            <motion.div
               key={item.id}
+              initial={reduceMotion ? undefined : { opacity: 0, y: 26, scale: 0.98 }}
+              whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}
+              whileHover={reduceMotion ? undefined : { y: -6 }}
+              transition={{ duration: 0.7, ease: 'easeOut' }}
               className="group relative overflow-hidden rounded-sm aspect-video cursor-pointer"
               onClick={() => navigate('/food-culture')}
             >
@@ -609,7 +1146,7 @@ export default function Home() {
                   <ArrowRight size={14} />
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </Section>
@@ -648,8 +1185,8 @@ export default function Home() {
 
                 {/* Floating Service Badge */}
                 <motion.div 
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ repeat: Infinity, duration: 4 }}
+                  animate={reduceMotion ? undefined : { y: [0, -10, 0] }}
+                  transition={reduceMotion ? undefined : { repeat: Infinity, duration: 4 }}
                   className="absolute -bottom-6 -left-6 bg-white p-8 shadow-2xl max-w-[240px] hidden md:block border border-gray-100"
                 >
                   <p className="text-red-600 font-bold text-xs uppercase tracking-widest mb-2">{t('Dịch vụ nổi bật')}</p>
@@ -759,6 +1296,17 @@ export default function Home() {
         {/* Background Decorative Elements */}
         <div className="absolute top-0 right-0 w-1/2 h-full bg-red-600/5 -skew-x-12 translate-x-1/4 pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-red-600/10 rounded-full blur-[120px] pointer-events-none" />
+        <motion.div
+          aria-hidden
+          className="absolute inset-0 opacity-30 pointer-events-none"
+          animate={reduceMotion ? undefined : { backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+          style={{
+            backgroundImage:
+              'linear-gradient(120deg, rgba(239,68,68,0.10), rgba(255,255,255,0.03), rgba(239,68,68,0.08))',
+            backgroundSize: '200% 200%',
+          }}
+        />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
@@ -850,6 +1398,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </div>
+    </motion.div>
   );
 }

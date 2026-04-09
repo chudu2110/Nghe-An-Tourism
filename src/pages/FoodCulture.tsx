@@ -7,8 +7,7 @@ import { useI18n } from '../i18n';
 const foodCultureImage = (fileName: string) =>
   new URL(`../../Food&Culture img/${fileName}`, import.meta.url).href;
 
-const viGiamSound = new URL('../../Sound/Đừng Trách Câu Ví Dặm  - Cáp Anh Tài  Lê Thu Uyên  Dân Ca Xứ Nghệ Hot Nhất 2024.mp3', import.meta.url).href;
-
+import viGiamSound from '../../Sound/Đừng Trách Câu Ví Dặm  - Cáp Anh Tài  Lê Thu Uyên  Dân Ca Xứ Nghệ Hot Nhất 2024.mp3';
 export default function FoodCulture() {
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);

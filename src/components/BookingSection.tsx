@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Plane, Home, Train, Hotel, Car, MessageSquare, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n';
@@ -99,7 +99,11 @@ const toOffer = (
 const isFlightTransport = (item: BookingServiceItem) =>
   item.tags.some((tag) => tag.toLowerCase().includes('hàng không'));
 
-export default function BookingSection() {
+type BookingSectionProps = {
+  showFloatingWidgets?: boolean;
+};
+
+export default function BookingSection({ showFloatingWidgets = true }: BookingSectionProps) {
   const [activeCategory, setActiveCategory] = useState<HomeBookingCategory>('flights');
   const [showFreeTripTag, setShowFreeTripTag] = useState(true);
   const navigate = useNavigate();
@@ -197,56 +201,83 @@ export default function BookingSection() {
             </motion.div>
           ))}
 
-          {showFreeTripTag && (
-            <div className="fixed right-32 bottom-10 z-[60]">
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => navigate('/lucky-wheel')}
-                  className="relative bg-red-600 text-white px-7 py-4 rounded-xl shadow-2xl hover:bg-red-700 transition-colors after:content-[''] after:absolute after:right-7 after:top-[calc(100%-1px)] after:w-10 after:h-8 after:bg-red-600 after:[clip-path:polygon(0_0,100%_0,100%_100%)]"
-                >
-                  <span className="font-medium text-lg leading-none">{t('Trúng kỳ nghỉ miễn phí')}</span>
-                  <span className="absolute -right-2 -top-2 opacity-90">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        hideFreeTripTag();
-                      }}
-                      aria-label={t('Đóng')}
-                      className="w-6 h-6 rounded-full bg-white/15 border border-white/25 flex items-center justify-center hover:bg-white/20 transition-colors"
-                    >
-                      <X size={12} />
-                    </button>
-                  </span>
-                </button>
-              </div>
-            </div>
-          )}
+          <AnimatePresence>
+            {showFloatingWidgets && showFreeTripTag && (
+              <motion.div
+                initial={{ opacity: 0, x: 56, y: 34, rotate: -8, scale: 0.92 }}
+                animate={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 56, y: 34, rotate: -8, scale: 0.92 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 18, mass: 0.7 }}
+                className="fixed right-32 bottom-10 z-[60]"
+                style={{ willChange: 'transform, opacity' }}
+              >
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/lucky-wheel')}
+                    className="relative bg-red-600 text-white px-7 py-4 rounded-xl shadow-2xl hover:bg-red-700 transition-colors after:content-[''] after:absolute after:right-7 after:top-[calc(100%-1px)] after:w-10 after:h-8 after:bg-red-600 after:[clip-path:polygon(0_0,100%_0,100%_100%)]"
+                  >
+                    <span className="font-medium text-lg leading-none">{t('Trúng kỳ nghỉ miễn phí')}</span>
+                    <span className="absolute -right-2 -top-2 opacity-90">
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          hideFreeTripTag();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            hideFreeTripTag();
+                          }
+                        }}
+                        aria-label={t('Đóng')}
+                        className="w-6 h-6 rounded-full bg-white/15 border border-white/25 flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer"
+                      >
+                        <X size={12} />
+                      </span>
+                    </span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       {/* Assistant Tab - Vertical on the right edge */}
-      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-50 hidden xl:block">
-        <button
-          type="button"
-          onClick={() => navigate('/assistant')}
-          className="bg-[#e61e2a] text-white py-6 px-3 rounded-l-2xl flex flex-col items-center space-y-4 cursor-pointer hover:bg-red-700 transition-all shadow-2xl group"
-        >
-          <div className="relative">
-            <MessageSquare size={24} className="fill-white/20" />
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full border-2 border-red-600" />
-          </div>
-          <span className="writing-mode-vertical text-sm font-bold uppercase tracking-[0.2em] py-4">{t('Assistant')}</span>
-          <div className="w-1 h-8 bg-white/30 rounded-full overflow-hidden">
-            <motion.div 
-              animate={{ y: [-32, 32] }}
-              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-              className="w-full h-1/2 bg-white"
-            />
-          </div>
-        </button>
-      </div>
+      <AnimatePresence>
+        {showFloatingWidgets && (
+          <motion.div
+            initial={{ opacity: 0, x: 0, clipPath: 'inset(0 0 0 100%)', filter: 'blur(8px)' }}
+            animate={{ opacity: 1, x: 0, clipPath: 'inset(0 0 0 0%)', filter: 'blur(0px)' }}
+            exit={{ opacity: 0, x: 0, clipPath: 'inset(0 0 0 100%)', filter: 'blur(8px)' }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed right-0 top-1/2 -translate-y-1/2 z-50 hidden xl:block"
+          >
+            <button
+              type="button"
+              onClick={() => navigate('/assistant')}
+              className="bg-[#e61e2a] text-white py-6 px-3 rounded-l-2xl flex flex-col items-center space-y-4 cursor-pointer hover:bg-red-700 transition-all shadow-2xl group"
+            >
+              <div className="relative">
+                <MessageSquare size={24} className="fill-white/20" />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full border-2 border-red-600" />
+              </div>
+              <span className="writing-mode-vertical text-sm font-bold uppercase tracking-[0.2em] py-4">{t('Assistant')}</span>
+              <div className="w-1 h-8 bg-white/30 rounded-full overflow-hidden">
+                <motion.div 
+                  animate={{ y: [-32, 32] }}
+                  transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                  className="w-full h-1/2 bg-white"
+                />
+              </div>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
